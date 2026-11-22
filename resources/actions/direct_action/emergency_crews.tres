@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ActionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/action_data.gd" id="1_action"]
+
+[resource]
+script = ExtResource("1_action")
+id = &"emergency_crews"
+branch = 2
+title = "Cuadrillas de Emergencia Municipal"
+description = "Mantenimiento básico de drenajes y recolección de residuos en puntos críticos."
+pros_text = "Mitigación rápida en Zona Urbana y Productiva; mejora leve de Confianza."
+cons_text = "Requiere mantenimiento mínimo cada tick."
+prerequisites = Array[StringName]([])
+cost_budget = 14
+maintenance_per_tick = 1
+delay_ticks = 0
+immediate_trust_delta = 2.0
+productive_mitigation_delta = 1.0
+urban_mitigation_delta = 1.5

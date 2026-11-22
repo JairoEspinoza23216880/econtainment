@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/action_node_button.gd" id="1_node_btn"]
+
+[node name="ActionNodeButton" type="Button"]
+custom_minimum_size = Vector2(210, 74)
+offset_right = 210.0
+offset_bottom = 74.0
+text = "Acción"
+autowrap_mode = 3
+script = ExtResource("1_node_btn")

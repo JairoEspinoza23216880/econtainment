@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ActionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/action_data.gd" id="1_action"]
+
+[resource]
+script = ExtResource("1_action")
+id = &"selective_boycott"
+branch = 0
+title = "Consumo Crítico y Boicot"
+description = "Redes universitarias presionan a marcas no sustentables en la Zona Urbana."
+pros_text = "Reduce plásticos y emisiones urbanas sin inversión continua de infraestructura."
+cons_text = "Conflictos con cámaras de comercio; reduce temporalmente la recaudación."
+prerequisites = Array[StringName]([&"waste_separation"])
+cost_budget = 15
+maintenance_per_tick = 0
+delay_ticks = 0
+immediate_trust_delta = 4.0
+budget_income_penalty = 3
+urban_emission_delta = -1.5

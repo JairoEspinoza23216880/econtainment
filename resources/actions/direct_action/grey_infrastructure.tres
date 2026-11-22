@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ActionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/action_data.gd" id="1_action"]
+
+[resource]
+script = ExtResource("1_action")
+id = &"grey_infrastructure"
+branch = 2
+title = "Macro-Infraestructura Gris"
+description = "Planta de Tratamiento de Aguas y Centro Metropolitano de Reciclaje."
+pros_text = "Mitigación pasiva continua muy alta sobre la Zona Urbana y Productiva."
+cons_text = "Requiere mantenimiento cada tick; si el presupuesto llega a 0, se apaga."
+prerequisites = Array[StringName]([&"emergency_crews"])
+cost_budget = 32
+maintenance_per_tick = 4
+delay_ticks = 0
+immediate_trust_delta = 3.0
+productive_mitigation_delta = 3.0
+urban_mitigation_delta = 3.0
+requires_positive_budget = true

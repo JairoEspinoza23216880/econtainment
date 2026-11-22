@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ActionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/action_data.gd" id="1_action"]
+
+[resource]
+script = ExtResource("1_action")
+id = &"neighborhood_watch"
+branch = 0
+title = "Vigilancia Digital Vecinal"
+description = "App municipal para que los vecinos geolocalicen tiraderos clandestinos y fugas."
+pros_text = "Revela alertas con 1 tick de anticipación y potencia las inspecciones."
+cons_text = "Si una alerta expira sin atenderse, penaliza el doble de Confianza."
+prerequisites = Array[StringName]([&"waste_separation"])
+cost_budget = 18
+maintenance_per_tick = 1
+delay_ticks = 0
+immediate_trust_delta = 2.0
+grants_early_alert = true
+missed_alert_penalty_multiplier = 2.0

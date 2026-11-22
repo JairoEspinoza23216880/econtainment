@@ -7,7 +7,7 @@ Pantallas
 	- Acciones Directas
 	- Legislaciones
 	- Concientización
-- Submenú de información de las acciones
+	- Información de las acciones
 
 Assets Necesarios por Pantalla
 - Menú Principal

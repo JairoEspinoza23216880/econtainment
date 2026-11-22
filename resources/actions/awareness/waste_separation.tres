@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ActionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/action_data.gd" id="1_action"]
+
+[resource]
+script = ExtResource("1_action")
+id = &"waste_separation"
+branch = 0
+title = "Separación Casera de Residuos"
+description = "Campaña ciudadana para separar orgánicos, plásticos y reciclables desde el hogar."
+pros_text = "Bajo coste; reduce generación doméstica y sube levemente la Confianza."
+cons_text = "Efecto moderado por sí sola."
+prerequisites = Array[StringName]([])
+cost_budget = 10
+maintenance_per_tick = 0
+delay_ticks = 0
+immediate_trust_delta = 5.0
+urban_emission_delta = -1.2
