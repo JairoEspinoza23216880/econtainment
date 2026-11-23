@@ -9,6 +9,16 @@ var speed_multiplier: float = GameBalance.SPEED_MULTIPLIER_NORMAL
 var current_tick: int = 0
 var tick_elapsed: float = 0.0
 
+# Estado de onboarding y pausa contextual en ActionsScreen
+var has_seen_welcome: bool = false
+var _in_actions_screen: bool = false
+var _was_paused_before_actions: bool = true
+
+# Últimos deltas registrados para mantener los indicadores QoL entre escenas
+var last_health_delta: float = 0.0
+var last_trust_delta: float = 0.0
+var last_budget_delta: int = 0
+
 
 func _process(delta: float) -> void:
 	# Solo avanzamos el reloj cuando la partida está activa y sin pausa
@@ -21,14 +31,20 @@ func _process(delta: float) -> void:
 		_advance_tick()
 
 
-## Inicia una nueva partida reiniciando la simulación y el reloj de ticks.
+## Inicia una nueva partida en pausa táctica para que el jugador lea el resumen inicial.
 func start_new_game() -> void:
 	simulation.reset()
 	current_tick = 0
 	tick_elapsed = 0.0
-	is_paused = false
+	is_paused = true
 	speed_multiplier = GameBalance.SPEED_MULTIPLIER_NORMAL
 	is_playing = true
+	has_seen_welcome = false
+	_in_actions_screen = false
+	_was_paused_before_actions = true
+	last_health_delta = 0.0
+	last_trust_delta = 0.0
+	last_budget_delta = 0
 
 	EventBus.time_scale_changed.emit(is_paused, speed_multiplier)
 	_emit_full_state()
@@ -38,17 +54,49 @@ func start_new_game() -> void:
 func stop_game() -> void:
 	is_playing = false
 	is_paused = false
+	_in_actions_screen = false
 	tick_elapsed = 0.0
+
+
+## Fuerza la pausa al entrar a ActionsScreen, guardando si ya estaba pausado antes.
+func enter_actions_screen() -> void:
+	if not _in_actions_screen:
+		_was_paused_before_actions = is_paused
+		_in_actions_screen = true
+	set_paused(true)
+
+
+## Restaura el estado de pausa previo al salir de ActionsScreen.
+func exit_actions_screen() -> void:
+	if _in_actions_screen:
+		_in_actions_screen = false
+		set_paused(_was_paused_before_actions)
 
 
 ## Intenta activar una acción del árbol y notifica a la UI si tuvo éxito.
 func activate_action(action_id: StringName) -> bool:
 	if not is_playing:
 		return false
+	var prev_trust := simulation.trust
+	var prev_budget := simulation.budget
 	if not simulation.activate_action(action_id):
 		return false
 
+	last_trust_delta = simulation.trust - prev_trust
+	last_budget_delta = simulation.budget - prev_budget
 	EventBus.action_activated.emit(action_id)
+	_emit_full_state()
+	return true
+
+
+## Intenta derogar una política activa o suspendida y notifica a la UI.
+func repeal_action(action_id: StringName) -> bool:
+	if not is_playing:
+		return false
+	if not simulation.repeal_action(action_id):
+		return false
+
+	EventBus.action_repealed.emit(action_id)
 	_emit_full_state()
 	return true
 
@@ -66,7 +114,7 @@ func toggle_pause() -> void:
 	set_paused(not is_paused)
 
 
-## Cambia el multiplicador de velocidad de los ticks (1x / 2x).
+## Cambia el multiplicador de velocidad de los ticks (1x / 2x / 3x).
 func set_speed_multiplier(multiplier: float) -> void:
 	speed_multiplier = maxf(multiplier, 0.5)
 	EventBus.time_scale_changed.emit(is_paused, speed_multiplier)
@@ -89,6 +137,9 @@ func _advance_tick() -> void:
 	EventBus.tick_started.emit(current_tick)
 
 	var summary := simulation.step_tick()
+	last_health_delta = summary.get("health_delta", 0.0)
+	last_trust_delta = summary.get("trust_delta", 0.0)
+	last_budget_delta = summary.get("budget_delta", 0)
 
 	# Notificamos derrames ocurridos durante este tick
 	var spillovers: Dictionary = summary.get("spillovers", {})
@@ -112,5 +163,8 @@ func _emit_full_state() -> void:
 	EventBus.game_state_updated.emit(
 		simulation.get_environmental_health(),
 		simulation.trust,
-		simulation.budget
+		simulation.budget,
+		last_health_delta,
+		last_trust_delta,
+		last_budget_delta
 	)

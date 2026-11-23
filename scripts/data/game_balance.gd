@@ -26,9 +26,10 @@ enum GameResult {
 
 # --- Configuración de tiempo (Ticks) ---
 ## Duración base de un tick (1 mes simulado) en segundos a velocidad 1x
-const TICK_DURATION_SECONDS: float = 5.0
+const TICK_DURATION_SECONDS: float = 10.0
 const SPEED_MULTIPLIER_NORMAL: float = 1.0
 const SPEED_MULTIPLIER_FAST: float = 2.0
+const SPEED_MULTIPLIER_ULTRA: float = 3.0
 
 # --- Condiciones de fin de partida ---
 const VICTORY_HEALTH_THRESHOLD: float = 100.0
@@ -37,10 +38,10 @@ const DEFEAT_THRESHOLD: float = 0.0
 
 # --- Estado inicial del jugador y las zonas ---
 const INITIAL_TRUST: float = 65.0
-const INITIAL_BUDGET: int = 30
+const INITIAL_BUDGET: int = 20
 const INITIAL_PRODUCTIVE_POLLUTION: float = 35.0
 const INITIAL_URBAN_POLLUTION: float = 30.0
-const INITIAL_RESERVE_POLLUTION: float = 15.0
+const INITIAL_RESERVE_POLLUTION: float = 25.0
 
 # --- Reglas de simulación por tick ---
 ## Emisión base de contaminantes por tick en cada zona
@@ -58,12 +59,12 @@ const SPILLOVER_TRANSFER_RATIO: float = 0.5
 ## Cantidad de derrame en un tick considerada severa (destruye humedales en maduración)
 const SEVERE_SPILLOVER_THRESHOLD: float = 10.0
 
-## Umbral de contaminación promedio que comienza a desgastar la Confianza Ciudadana
-const TRUST_DECAY_POLLUTION_THRESHOLD: float = 45.0
-const TRUST_DECAY_PER_TICK: float = 2.5
+## Cambio pasivo de Confianza Ciudadana por tick según el estado de cada zona
+const TRUST_GAIN_PER_HEALTHY_ZONE: float = 1.2
+const TRUST_LOSS_PER_POLLUTED_ZONE: float = 1.8
 
 ## Ingreso base de Presupuesto Verde al inicio de cada tick
-const BASE_BUDGET_INCOME_PER_TICK: int = 12
+const BASE_BUDGET_INCOME_PER_TICK: int = 10
 const MIN_BUDGET_INCOME_PER_TICK: int = 4
 
 ## Penalización base por alerta (foco rojo) ignorada; se duplica con Vigilancia Digital

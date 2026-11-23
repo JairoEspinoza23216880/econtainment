@@ -27,6 +27,40 @@ func test_initial_state() -> void:
 		"Confianza inicial incorrecta"
 	)
 	assert_eq(engine.budget, GameBalanceClass.INITIAL_BUDGET, "Presupuesto inicial incorrecto")
+	assert_eq(GameBalanceClass.TICK_DURATION_SECONDS, 10.0, "La duración de tick debe ser 10s")
+	assert_eq(
+		engine.zones[GameBalanceClass.ZoneId.RESERVE].get_visual_state(),
+		&"normal",
+		"La Reserva debe iniciar en estado normal"
+	)
+
+
+func test_dynamic_trust_by_zone_state() -> void:
+	var engine = SimulationEngineClass.new()
+	# Todas las zonas en normal (25%-35%): la confianza no debe cambiar
+	for zone in engine.zones.values():
+		zone.pollution = 30.0
+		zone.emission_rate = 0.0
+		zone.mitigation_rate = 0.0
+		zone.regen_rate = 0.0
+	var trust_before: float = engine.trust
+	engine.step_tick()
+	assert_true(is_equal_approx(engine.trust, trust_before), "Zonas en normal no deben alterar la Confianza")
+
+	# Todas las zonas sanas (<=20%): la confianza debe subir para evitar softlocks
+	for zone in engine.zones.values():
+		zone.pollution = 10.0
+	var summary_healthy: Dictionary = engine.step_tick()
+	assert_gt(engine.trust, trust_before, "Zonas sanas deben aumentar la Confianza")
+	assert_gt(summary_healthy["trust_delta"], 0.0, "trust_delta debe ser positivo")
+
+	# Zonas contaminadas (>=50%): la confianza debe bajar
+	for zone in engine.zones.values():
+		zone.pollution = 60.0
+	var trust_before_polluted: float = engine.trust
+	var summary_polluted: Dictionary = engine.step_tick()
+	assert_true(engine.trust < trust_before_polluted, "Zonas contaminadas deben reducir la Confianza")
+	assert_true(summary_polluted["trust_delta"] < 0.0, "trust_delta debe ser negativo")
 
 
 func test_net_negative_pollution() -> void:

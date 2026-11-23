@@ -1,11 +1,12 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/actions_screen.gd" id="1_actions_screen"]
 [ext_resource type="PackedScene" path="res://scenes/actions/action_tree_canvas.tscn" id="2_tree_canvas"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud_bar.tscn" id="3_hud_bar"]
 [ext_resource type="PackedScene" path="res://scenes/ui/end_game_modal.tscn" id="4_end_modal"]
+[ext_resource type="PackedScene" path="res://scenes/ui/finance_modal.tscn" id="5_finance_modal"]
 
-[node name="ActionsScreen" type="Control" node_paths=PackedStringArray("awareness_tab_button", "legislation_tab_button", "direct_tab_button", "tree_canvas", "detail_title_label", "detail_desc_label", "detail_pros_label", "detail_cons_label", "detail_cost_label", "activate_button", "hud_bar", "end_game_modal")]
+[node name="ActionsScreen" type="Control" node_paths=PackedStringArray("awareness_tab_button", "legislation_tab_button", "direct_tab_button", "tree_canvas", "detail_title_label", "detail_desc_label", "detail_pros_label", "detail_cons_label", "detail_cost_label", "activate_button", "repeal_button", "hud_bar", "end_game_modal", "finance_modal")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,18 +14,20 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_actions_screen")
-awareness_tab_button = NodePath("MainVBox/TopTabsMargin/BranchTabs/AwarenessTab")
-legislation_tab_button = NodePath("MainVBox/TopTabsMargin/BranchTabs/LegislationTab")
-direct_tab_button = NodePath("MainVBox/TopTabsMargin/BranchTabs/DirectTab")
-tree_canvas = NodePath("MainVBox/WorkspaceSplit/LeftTreePanel/ScrollContainer/ActionTreeCanvas")
-detail_title_label = NodePath("MainVBox/WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailTitle")
-detail_desc_label = NodePath("MainVBox/WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailDesc")
-detail_pros_label = NodePath("MainVBox/WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailPros")
-detail_cons_label = NodePath("MainVBox/WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailCons")
-detail_cost_label = NodePath("MainVBox/WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailCost")
-activate_button = NodePath("MainVBox/WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/ActivateButton")
-hud_bar = NodePath("MainVBox/HudBar")
+awareness_tab_button = NodePath("TopTabsMargin/BranchTabs/AwarenessTab")
+legislation_tab_button = NodePath("TopTabsMargin/BranchTabs/LegislationTab")
+direct_tab_button = NodePath("TopTabsMargin/BranchTabs/DirectTab")
+tree_canvas = NodePath("WorkspaceSplit/LeftTreePanel/ScrollContainer/ActionTreeCanvas")
+detail_title_label = NodePath("WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailTitle")
+detail_desc_label = NodePath("WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailScroll/DetailContentVBox/DetailDesc")
+detail_pros_label = NodePath("WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailScroll/DetailContentVBox/DetailPros")
+detail_cons_label = NodePath("WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailScroll/DetailContentVBox/DetailCons")
+detail_cost_label = NodePath("WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailCost")
+activate_button = NodePath("WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/ButtonsVBox/ActivateButton")
+repeal_button = NodePath("WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/ButtonsVBox/RepealButton")
+hud_bar = NodePath("HudBar")
 end_game_modal = NodePath("EndGameModal")
+finance_modal = NodePath("FinanceModal")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -35,114 +38,147 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.117647, 0.145098, 0.172549, 1)
 
-[node name="MainVBox" type="VBoxContainer" parent="."]
+[node name="TopTabsMargin" type="MarginContainer" parent="."]
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 10
 anchor_right = 1.0
-anchor_bottom = 1.0
+offset_bottom = 62.0
 grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 0
-
-[node name="TopTabsMargin" type="MarginContainer" parent="MainVBox"]
-layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 8
 
-[node name="BranchTabs" type="HBoxContainer" parent="MainVBox/TopTabsMargin"]
+[node name="BranchTabs" type="HBoxContainer" parent="TopTabsMargin"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="AwarenessTab" type="Button" parent="MainVBox/TopTabsMargin/BranchTabs"]
+[node name="AwarenessTab" type="Button" parent="TopTabsMargin/BranchTabs"]
 custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Concientización (Ciudadanía)"
 
-[node name="LegislationTab" type="Button" parent="MainVBox/TopTabsMargin/BranchTabs"]
+[node name="LegislationTab" type="Button" parent="TopTabsMargin/BranchTabs"]
 custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Legislaciones (Empresas)"
 
-[node name="DirectTab" type="Button" parent="MainVBox/TopTabsMargin/BranchTabs"]
+[node name="DirectTab" type="Button" parent="TopTabsMargin/BranchTabs"]
 custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Acciones Directas (Gobierno)"
 
-[node name="WorkspaceSplit" type="HSplitContainer" parent="MainVBox"]
+[node name="WorkspaceSplit" type="HSplitContainer" parent="."]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 62.0
+offset_bottom = -128.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LeftTreePanel" type="PanelContainer" parent="WorkspaceSplit"]
+clip_contents = true
+custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="WorkspaceSplit/LeftTreePanel"]
+layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
-split_offset = 640
 
-[node name="LeftTreePanel" type="PanelContainer" parent="MainVBox/WorkspaceSplit"]
+[node name="ActionTreeCanvas" parent="WorkspaceSplit/LeftTreePanel/ScrollContainer" instance=ExtResource("2_tree_canvas")]
+layout_mode = 2
+
+[node name="RightDetailPanel" type="PanelContainer" parent="WorkspaceSplit"]
+clip_contents = true
+custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainVBox/WorkspaceSplit/LeftTreePanel"]
+[node name="MarginContainer" type="MarginContainer" parent="WorkspaceSplit/RightDetailPanel"]
 layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
 
-[node name="ActionTreeCanvas" parent="MainVBox/WorkspaceSplit/LeftTreePanel/ScrollContainer" instance=ExtResource("2_tree_canvas")]
+[node name="VBoxContainer" type="VBoxContainer" parent="WorkspaceSplit/RightDetailPanel/MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 12
 
-[node name="RightDetailPanel" type="PanelContainer" parent="MainVBox/WorkspaceSplit"]
+[node name="DetailTitle" type="Label" parent="WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-
-[node name="MarginContainer" type="MarginContainer" parent="MainVBox/WorkspaceSplit/RightDetailPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 24
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/WorkspaceSplit/RightDetailPanel/MarginContainer"]
-layout_mode = 2
-theme_override_constants/separation = 14
-
-[node name="DetailTitle" type="Label" parent="MainVBox/WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 22
 text = "Acción"
 autowrap_mode = 3
 
-[node name="DetailDesc" type="Label" parent="MainVBox/WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer"]
+[node name="DetailScroll" type="ScrollContainer" parent="WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Descripción"
-autowrap_mode = 3
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
-[node name="DetailPros" type="Label" parent="MainVBox/WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer"]
+[node name="DetailContentVBox" type="VBoxContainer" parent="WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailScroll"]
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="DetailPros" type="Label" parent="WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailScroll/DetailContentVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.55, 0.9, 0.6, 1)
 text = "Ventajas:"
 autowrap_mode = 3
 
-[node name="DetailCons" type="Label" parent="MainVBox/WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer"]
+[node name="DetailCons" type="Label" parent="WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailScroll/DetailContentVBox"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.95, 0.65, 0.45, 1)
 text = "Riesgos:"
 autowrap_mode = 3
 
-[node name="Spacer" type="Control" parent="MainVBox/WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer"]
+[node name="DetailDesc" type="Label" parent="WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailScroll/DetailContentVBox"]
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_horizontal = 3
+text = "Descripción"
+autowrap_mode = 3
 
-[node name="DetailCost" type="Label" parent="MainVBox/WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer"]
+[node name="DetailCost" type="Label" parent="WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Coste: $0"
 autowrap_mode = 3
 
-[node name="ActivateButton" type="Button" parent="MainVBox/WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 52)
+[node name="ButtonsVBox" type="VBoxContainer" parent="WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_constants/separation = 8
+
+[node name="ActivateButton" type="Button" parent="WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/ButtonsVBox"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
 text = "Activar"
 
-[node name="HudBar" parent="MainVBox" instance=ExtResource("3_hud_bar")]
+[node name="RepealButton" type="Button" parent="WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/ButtonsVBox"]
+visible = false
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
+text = "Derogar Política"
+
+[node name="HudBar" parent="." instance=ExtResource("3_hud_bar")]
+layout_mode = 1
 
 [node name="EndGameModal" parent="." instance=ExtResource("4_end_modal")]
+layout_mode = 1
+
+[node name="FinanceModal" parent="." instance=ExtResource("5_finance_modal")]
 layout_mode = 1

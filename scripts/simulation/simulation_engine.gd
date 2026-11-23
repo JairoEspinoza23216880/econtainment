@@ -151,19 +151,88 @@ func get_environmental_health() -> float:
 	return clampf(total_cleanliness / float(zones.size()), 0.0, 100.0)
 
 
-## Calcula el ingreso de Presupuesto Verde para el tick actual según Confianza y Salud.
-func calculate_budget_income() -> int:
+## Indica si alguna acción hija/dependiente sigue activa, madurando o suspendida.
+func has_active_dependents(action_id: StringName) -> bool:
+	for other: ActionDataClass in catalog.get_all_actions():
+		if not other.prerequisites.has(action_id):
+			continue
+		var other_status := get_action_status(other.id)
+		if (
+			other_status == ActionStatus.ACTIVE
+			or other_status == ActionStatus.MATURING
+			or other_status == ActionStatus.SUSPENDED
+		):
+			return true
+	return false
+
+
+## Indica si una política activa o suspendida puede derogarse sin romper dependencias activas.
+func can_repeal_action(action_id: StringName) -> bool:
+	var status := get_action_status(action_id)
+	if status != ActionStatus.ACTIVE and status != ActionStatus.SUSPENDED:
+		return false
+	return not has_active_dependents(action_id)
+
+
+## Deroga una política activa/suspendida, deteniendo su mantenimiento y revirtiendo sus efectos.
+func repeal_action(action_id: StringName) -> bool:
+	if not can_repeal_action(action_id):
+		return false
+
+	action_states[action_id] = {
+		"status": ActionStatus.AVAILABLE,
+		"remaining_delay": 0,
+	}
+	_recompute_modifiers()
+	_refresh_unlocked_actions()
+	return true
+
+
+## Calcula el ingreso bruto antes de penalizaciones por boicot o similares.
+func calculate_gross_budget_income() -> int:
 	var health_factor := get_environmental_health() / 100.0
 	var trust_factor := trust / 100.0
 	var multiplier := 0.5 + 0.5 * ((health_factor + trust_factor) * 0.5)
-	var raw_income := roundi(float(GameBalance.BASE_BUDGET_INCOME_PER_TICK) * multiplier)
+	return roundi(float(GameBalance.BASE_BUDGET_INCOME_PER_TICK) * multiplier)
+
+
+## Calcula el ingreso de Presupuesto Verde para el tick actual según Confianza y Salud.
+func calculate_budget_income() -> int:
+	var raw_income := calculate_gross_budget_income()
 	return maxi(raw_income - budget_income_penalty, GameBalance.MIN_BUDGET_INCOME_PER_TICK)
+
+
+## Devuelve un desglose financiero detallado del flujo mensual de Presupuesto Verde.
+func get_finance_breakdown() -> Dictionary:
+	var gross_income := calculate_gross_budget_income()
+	var effective_income := calculate_budget_income()
+	var maintenance_items: Array[Dictionary] = []
+
+	for action: ActionDataClass in catalog.get_all_actions():
+		if get_action_status(action.id) == ActionStatus.ACTIVE and action.maintenance_per_tick > 0:
+			maintenance_items.append({
+				"title": action.title,
+				"maintenance": action.maintenance_per_tick,
+			})
+
+	return {
+		"gross_income": gross_income,
+		"penalty": budget_income_penalty,
+		"effective_income": effective_income,
+		"total_maintenance": maintenance_cost_per_tick,
+		"net_income": effective_income - maintenance_cost_per_tick,
+		"maintenance_items": maintenance_items,
+	}
 
 
 ## Ejecuta un tick completo de simulación y devuelve un diccionario resumen para la UI.
 func step_tick() -> Dictionary:
 	if game_result != GameBalance.GameResult.NONE:
-		return _build_summary({}, [])
+		return _build_summary({}, [], 0.0, 0.0, 0)
+
+	var prev_health := get_environmental_health()
+	var prev_trust := trust
+	var prev_budget := budget
 
 	tick_count += 1
 	var modifiers_dirty := false
@@ -196,15 +265,24 @@ func step_tick() -> Dictionary:
 	var spillovers: Dictionary = _apply_spillovers()
 	var destroyed_actions: Array[StringName] = _handle_severe_spill_vulnerability(spillovers)
 
-	# 5. Desgaste pasivo de Confianza Ciudadana si la contaminación promedio es alta
-	var average_pollution := 100.0 - get_environmental_health()
-	if average_pollution > GameBalance.TRUST_DECAY_POLLUTION_THRESHOLD:
-		trust = clampf(trust - GameBalance.TRUST_DECAY_PER_TICK, 0.0, 100.0)
+	# 5. Confianza Ciudadana dinámica según el estado de cada zona (Sano sube, Contaminado baja)
+	var trust_zone_delta := 0.0
+	for zone: ZoneState in zones.values():
+		var visual_state := zone.get_visual_state()
+		if visual_state == &"healthy":
+			trust_zone_delta += GameBalance.TRUST_GAIN_PER_HEALTHY_ZONE
+		elif visual_state == &"polluted":
+			trust_zone_delta -= GameBalance.TRUST_LOSS_PER_POLLUTED_ZONE
+	trust = clampf(trust + trust_zone_delta, 0.0, 100.0)
 
 	# 6. Verificación de condiciones de Victoria o Derrota
 	game_result = evaluate_game_result()
 
-	return _build_summary(spillovers, destroyed_actions)
+	var health_delta := get_environmental_health() - prev_health
+	var trust_delta := trust - prev_trust
+	var budget_delta := budget - prev_budget
+
+	return _build_summary(spillovers, destroyed_actions, health_delta, trust_delta, budget_delta)
 
 
 ## Evalúa si se ha cumplido alguna condición de fin de partida.
@@ -372,12 +450,21 @@ func _apply_spillovers() -> Dictionary:
 	return spillovers
 
 
-func _build_summary(spillovers: Dictionary, destroyed_actions: Array[StringName]) -> Dictionary:
+func _build_summary(
+	spillovers: Dictionary,
+	destroyed_actions: Array[StringName],
+	health_delta: float,
+	trust_delta: float,
+	budget_delta: int
+) -> Dictionary:
 	return {
 		"tick": tick_count,
 		"health": get_environmental_health(),
 		"trust": trust,
 		"budget": budget,
+		"health_delta": health_delta,
+		"trust_delta": trust_delta,
+		"budget_delta": budget_delta,
 		"budget_depleted": last_budget_depleted,
 		"spillovers": spillovers,
 		"destroyed_actions": destroyed_actions,

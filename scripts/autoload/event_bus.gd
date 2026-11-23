@@ -11,7 +11,14 @@ signal time_scale_changed(is_paused: bool, speed_multiplier: float)
 
 # Señales de estado de métricas y zonas
 @warning_ignore("unused_signal")
-signal game_state_updated(health: float, trust: float, budget: int)
+signal game_state_updated(
+	health: float,
+	trust: float,
+	budget: int,
+	health_delta: float,
+	trust_delta: float,
+	budget_delta: int
+)
 @warning_ignore("unused_signal")
 signal zone_updated(zone_id: int, pollution: float)
 @warning_ignore("unused_signal")
@@ -22,6 +29,8 @@ signal spillover_occurred(from_zone_id: int, amount: float)
 signal action_unlocked(action_id: StringName)
 @warning_ignore("unused_signal")
 signal action_activated(action_id: StringName)
+@warning_ignore("unused_signal")
+signal action_repealed(action_id: StringName)
 @warning_ignore("unused_signal")
 signal alert_triggered(zone_id: int, alert_id: StringName)
 @warning_ignore("unused_signal")

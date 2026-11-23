@@ -104,3 +104,27 @@ func test_extensible_custom_action_registration() -> void:
 	assert_true(engine.can_activate_action(&"custom_solar_subsidy"), "Una nueva acción registrada debe ser activable")
 	assert_true(engine.activate_action(&"custom_solar_subsidy"), "Debe activar la acción personalizada")
 	assert_eq(engine.get_action_status(&"custom_solar_subsidy"), engine.ActionStatus.ACTIVE)
+
+
+func test_repeal_action_and_finance_breakdown() -> void:
+	var engine = _new_engine()
+	engine.budget = 100
+	engine.activate_action(&"emission_standards")
+	engine.activate_action(&"punitive_closures")
+
+	# No se debe poder derogar la raíz mientras punitive_closures siga activa
+	assert_false(engine.can_repeal_action(&"emission_standards"), "No debe derogar raíz con hija activa")
+	assert_true(engine.can_repeal_action(&"punitive_closures"), "Debe poder derogar hoja activa")
+
+	var breakdown_before: Dictionary = engine.get_finance_breakdown()
+	assert_gt(breakdown_before["total_maintenance"], 0, "Debe reportar mantenimiento activo")
+
+	assert_true(engine.repeal_action(&"punitive_closures"), "Debe derogar punitive_closures")
+	assert_eq(engine.get_action_status(&"punitive_closures"), engine.ActionStatus.AVAILABLE)
+	assert_true(engine.can_repeal_action(&"emission_standards"), "Ahora debe permitir derogar la raíz")
+
+	var breakdown_after: Dictionary = engine.get_finance_breakdown()
+	assert_true(
+		breakdown_after["total_maintenance"] < breakdown_before["total_maintenance"],
+		"El mantenimiento total debe bajar tras derogar"
+	)

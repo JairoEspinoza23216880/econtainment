@@ -12,6 +12,8 @@ const MAIN_MENU_PATH: String = "res://scenes/main_menu/main_menu.tscn"
 @export var hud_bar: PanelContainer
 @export var pause_menu: ColorRect
 @export var end_game_modal: ColorRect
+@export var welcome_modal: ColorRect
+@export var finance_modal: ColorRect
 
 
 func _ready() -> void:
@@ -19,7 +21,9 @@ func _ready() -> void:
 		menu_button.pressed.connect(_on_menu_button_pressed)
 	if hud_bar:
 		hud_bar.set_actions_button_mode(false)
+		hud_bar.set_time_controls_locked(false)
 		hud_bar.actions_button_pressed.connect(_on_actions_button_pressed)
+		hud_bar.finance_button_pressed.connect(_on_finance_button_pressed)
 	if pause_menu:
 		pause_menu.resumed.connect(_on_pause_resumed)
 		pause_menu.quit_to_menu_requested.connect(_on_quit_to_menu)
@@ -31,6 +35,10 @@ func _ready() -> void:
 	EventBus.game_ended.connect(_on_game_ended)
 
 	_sync_all_zones()
+
+	# Mostramos el resumen inicial una sola vez al comenzar la partida
+	if welcome_modal and not GameManager.has_seen_welcome:
+		welcome_modal.visible = true
 
 
 func _sync_all_zones() -> void:
@@ -74,6 +82,11 @@ func _on_actions_button_pressed() -> void:
 	get_tree().change_scene_to_file(ACTIONS_SCENE_PATH)
 
 
+func _on_finance_button_pressed() -> void:
+	if finance_modal:
+		finance_modal.open_breakdown(GameManager.simulation.get_finance_breakdown())
+
+
 func _on_menu_button_pressed() -> void:
 	GameManager.set_paused(true)
 	if pause_menu:
@@ -90,6 +103,7 @@ func _on_retry_requested() -> void:
 	if end_game_modal:
 		end_game_modal.visible = false
 	GameManager.start_new_game()
+	GameManager.has_seen_welcome = true
 	_sync_all_zones()
 
 

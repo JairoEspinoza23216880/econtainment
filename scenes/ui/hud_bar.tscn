@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/ui/hud_bar.gd" id="1_hud_bar"]
 
-[node name="HudBar" type="PanelContainer" node_paths=PackedStringArray("actions_button", "pause_button", "speed_1x_button", "speed_2x_button", "tick_label", "tick_progress_bar", "health_bar", "health_value_label", "trust_bar", "trust_value_label", "budget_value_label")]
+[node name="HudBar" type="PanelContainer" node_paths=PackedStringArray("actions_button", "pause_button", "speed_1x_button", "speed_2x_button", "speed_3x_button", "tick_label", "tick_progress_bar", "health_bar", "health_value_label", "health_delta_label", "trust_bar", "trust_value_label", "trust_delta_label", "budget_value_label", "budget_delta_label", "finance_button")]
 custom_minimum_size = Vector2(0, 128)
 anchors_preset = 12
 anchor_top = 1.0
@@ -15,13 +15,18 @@ actions_button = NodePath("MarginContainer/HBoxContainer/LeftControls/ActionsBut
 pause_button = NodePath("MarginContainer/HBoxContainer/LeftControls/TimeControls/PauseButton")
 speed_1x_button = NodePath("MarginContainer/HBoxContainer/LeftControls/TimeControls/Speed1xButton")
 speed_2x_button = NodePath("MarginContainer/HBoxContainer/LeftControls/TimeControls/Speed2xButton")
+speed_3x_button = NodePath("MarginContainer/HBoxContainer/LeftControls/TimeControls/Speed3xButton")
 tick_label = NodePath("MarginContainer/HBoxContainer/LeftControls/TimeControls/TickInfo/TickLabel")
 tick_progress_bar = NodePath("MarginContainer/HBoxContainer/LeftControls/TimeControls/TickInfo/TickProgressBar")
 health_bar = NodePath("MarginContainer/HBoxContainer/RightMetrics/HealthRow/HealthBar")
 health_value_label = NodePath("MarginContainer/HBoxContainer/RightMetrics/HealthRow/HealthValue")
+health_delta_label = NodePath("MarginContainer/HBoxContainer/RightMetrics/HealthRow/HealthDelta")
 trust_bar = NodePath("MarginContainer/HBoxContainer/RightMetrics/TrustRow/TrustBar")
 trust_value_label = NodePath("MarginContainer/HBoxContainer/RightMetrics/TrustRow/TrustValue")
+trust_delta_label = NodePath("MarginContainer/HBoxContainer/RightMetrics/TrustRow/TrustDelta")
 budget_value_label = NodePath("MarginContainer/HBoxContainer/RightMetrics/BudgetRow/BudgetValue")
+budget_delta_label = NodePath("MarginContainer/HBoxContainer/RightMetrics/BudgetRow/BudgetDelta")
+finance_button = NodePath("MarginContainer/HBoxContainer/RightMetrics/BudgetRow/FinanceButton")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -37,35 +42,40 @@ theme_override_constants/separation = 24
 [node name="LeftControls" type="HBoxContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 16
+theme_override_constants/separation = 14
 
 [node name="ActionsButton" type="Button" parent="MarginContainer/HBoxContainer/LeftControls"]
-custom_minimum_size = Vector2(180, 0)
+custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Acciones"
 
 [node name="TimeControls" type="HBoxContainer" parent="MarginContainer/HBoxContainer/LeftControls"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
 [node name="PauseButton" type="Button" parent="MarginContainer/HBoxContainer/LeftControls/TimeControls"]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(96, 0)
 layout_mode = 2
 text = "Pausa"
 
 [node name="Speed1xButton" type="Button" parent="MarginContainer/HBoxContainer/LeftControls/TimeControls"]
-custom_minimum_size = Vector2(48, 0)
+custom_minimum_size = Vector2(44, 0)
 layout_mode = 2
 text = "1x"
 
 [node name="Speed2xButton" type="Button" parent="MarginContainer/HBoxContainer/LeftControls/TimeControls"]
-custom_minimum_size = Vector2(48, 0)
+custom_minimum_size = Vector2(44, 0)
 layout_mode = 2
 text = "2x"
 
+[node name="Speed3xButton" type="Button" parent="MarginContainer/HBoxContainer/LeftControls/TimeControls"]
+custom_minimum_size = Vector2(44, 0)
+layout_mode = 2
+text = "3x"
+
 [node name="TickInfo" type="VBoxContainer" parent="MarginContainer/HBoxContainer/LeftControls/TimeControls"]
-custom_minimum_size = Vector2(120, 0)
+custom_minimum_size = Vector2(110, 0)
 layout_mode = 2
 alignment = 1
 
@@ -80,14 +90,14 @@ layout_mode = 2
 show_percentage = false
 
 [node name="RightMetrics" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
-custom_minimum_size = Vector2(420, 0)
+custom_minimum_size = Vector2(510, 0)
 layout_mode = 2
 alignment = 1
 theme_override_constants/separation = 6
 
 [node name="HealthRow" type="HBoxContainer" parent="MarginContainer/HBoxContainer/RightMetrics"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="HealthTitle" type="Label" parent="MarginContainer/HBoxContainer/RightMetrics/HealthRow"]
 custom_minimum_size = Vector2(150, 0)
@@ -97,18 +107,23 @@ text = "Salud Ambiental"
 [node name="HealthBar" type="ProgressBar" parent="MarginContainer/HBoxContainer/RightMetrics/HealthRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-value = 73.0
+value = 70.0
 show_percentage = false
 
 [node name="HealthValue" type="Label" parent="MarginContainer/HBoxContainer/RightMetrics/HealthRow"]
-custom_minimum_size = Vector2(52, 0)
+custom_minimum_size = Vector2(46, 0)
 layout_mode = 2
-text = "73%"
+text = "70%"
+horizontal_alignment = 2
+
+[node name="HealthDelta" type="Label" parent="MarginContainer/HBoxContainer/RightMetrics/HealthRow"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
 horizontal_alignment = 2
 
 [node name="TrustRow" type="HBoxContainer" parent="MarginContainer/HBoxContainer/RightMetrics"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="TrustTitle" type="Label" parent="MarginContainer/HBoxContainer/RightMetrics/TrustRow"]
 custom_minimum_size = Vector2(150, 0)
@@ -122,14 +137,19 @@ value = 65.0
 show_percentage = false
 
 [node name="TrustValue" type="Label" parent="MarginContainer/HBoxContainer/RightMetrics/TrustRow"]
-custom_minimum_size = Vector2(52, 0)
+custom_minimum_size = Vector2(46, 0)
 layout_mode = 2
 text = "65%"
 horizontal_alignment = 2
 
+[node name="TrustDelta" type="Label" parent="MarginContainer/HBoxContainer/RightMetrics/TrustRow"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+horizontal_alignment = 2
+
 [node name="BudgetRow" type="HBoxContainer" parent="MarginContainer/HBoxContainer/RightMetrics"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="BudgetTitle" type="Label" parent="MarginContainer/HBoxContainer/RightMetrics/BudgetRow"]
 custom_minimum_size = Vector2(150, 0)
@@ -140,5 +160,15 @@ text = "Presupuesto Verde"
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 18
-text = "$30"
+text = "$20"
 horizontal_alignment = 2
+
+[node name="BudgetDelta" type="Label" parent="MarginContainer/HBoxContainer/RightMetrics/BudgetRow"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+horizontal_alignment = 2
+
+[node name="FinanceButton" type="Button" parent="MarginContainer/HBoxContainer/RightMetrics/BudgetRow"]
+custom_minimum_size = Vector2(84, 0)
+layout_mode = 2
+text = "Finanzas"

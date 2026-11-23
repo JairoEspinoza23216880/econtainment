@@ -1,12 +1,14 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/game_screen.gd" id="1_game_screen"]
 [ext_resource type="PackedScene" path="res://scenes/game/zone_panel.tscn" id="2_zone_panel"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud_bar.tscn" id="3_hud_bar"]
 [ext_resource type="PackedScene" path="res://scenes/ui/pause_menu.tscn" id="4_pause_menu"]
 [ext_resource type="PackedScene" path="res://scenes/ui/end_game_modal.tscn" id="5_end_modal"]
+[ext_resource type="PackedScene" path="res://scenes/ui/welcome_modal.tscn" id="6_welcome_modal"]
+[ext_resource type="PackedScene" path="res://scenes/ui/finance_modal.tscn" id="7_finance_modal"]
 
-[node name="GameScreen" type="Control" node_paths=PackedStringArray("menu_button", "productive_panel", "urban_panel", "reserve_panel", "spillover_arrow_label", "hud_bar", "pause_menu", "end_game_modal")]
+[node name="GameScreen" type="Control" node_paths=PackedStringArray("menu_button", "productive_panel", "urban_panel", "reserve_panel", "spillover_arrow_label", "hud_bar", "pause_menu", "end_game_modal", "welcome_modal", "finance_modal")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,6 +24,8 @@ spillover_arrow_label = NodePath("MainVBox/CityArea/ZonesCenter/ZonesVBox/Spillo
 hud_bar = NodePath("MainVBox/HudBar")
 pause_menu = NodePath("PauseMenu")
 end_game_modal = NodePath("EndGameModal")
+welcome_modal = NodePath("WelcomeModal")
+finance_modal = NodePath("FinanceModal")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -117,4 +121,10 @@ layout_mode = 2
 layout_mode = 1
 
 [node name="EndGameModal" parent="." instance=ExtResource("5_end_modal")]
+layout_mode = 1
+
+[node name="WelcomeModal" parent="." instance=ExtResource("6_welcome_modal")]
+layout_mode = 1
+
+[node name="FinanceModal" parent="." instance=ExtResource("7_finance_modal")]
 layout_mode = 1

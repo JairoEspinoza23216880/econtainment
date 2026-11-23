@@ -13,14 +13,19 @@ const GAME_SCENE_PATH: String = "res://scenes/game/game_screen.tscn"
 @export var detail_cons_label: Label
 @export var detail_cost_label: Label
 @export var activate_button: Button
+@export var repeal_button: Button
 @export var hud_bar: PanelContainer
 @export var end_game_modal: ColorRect
+@export var finance_modal: ColorRect
 
 var _current_branch: GameBalance.BranchType = GameBalance.BranchType.AWARENESS
 var _selected_action_id: StringName = &""
 
 
 func _ready() -> void:
+	# Pausamos forzadamente al entrar al menú de acciones para leer sin prisas
+	GameManager.enter_actions_screen()
+
 	if awareness_tab_button:
 		awareness_tab_button.pressed.connect(func() -> void: _select_branch(GameBalance.BranchType.AWARENESS))
 	if legislation_tab_button:
@@ -32,10 +37,14 @@ func _ready() -> void:
 		tree_canvas.action_selected.connect(_on_action_selected)
 	if activate_button:
 		activate_button.pressed.connect(_on_activate_pressed)
+	if repeal_button:
+		repeal_button.pressed.connect(_on_repeal_pressed)
 
 	if hud_bar:
 		hud_bar.set_actions_button_mode(true)
+		hud_bar.set_time_controls_locked(true)
 		hud_bar.actions_button_pressed.connect(_on_back_to_city_pressed)
+		hud_bar.finance_button_pressed.connect(_on_finance_button_pressed)
 
 	if end_game_modal:
 		end_game_modal.retry_requested.connect(_on_retry_requested)
@@ -43,6 +52,7 @@ func _ready() -> void:
 
 	EventBus.tick_completed.connect(func(_t: int) -> void: _refresh_view())
 	EventBus.action_activated.connect(func(_id: StringName) -> void: _refresh_view())
+	EventBus.action_repealed.connect(func(_id: StringName) -> void: _refresh_view())
 	EventBus.game_ended.connect(_on_game_ended)
 
 	_select_branch(GameBalance.BranchType.AWARENESS)
@@ -88,6 +98,8 @@ func _refresh_detail_panel() -> void:
 		if activate_button:
 			activate_button.disabled = true
 			activate_button.text = "Activar"
+		if repeal_button:
+			repeal_button.visible = false
 		return
 
 	if detail_title_label:
@@ -124,6 +136,17 @@ func _refresh_detail_panel() -> void:
 			_:
 				activate_button.text = "Activar ($%d)" % action.cost_budget
 
+	if repeal_button:
+		var is_repealable_status := (
+			status == SimulationEngine.ActionStatus.ACTIVE
+			or status == SimulationEngine.ActionStatus.SUSPENDED
+		)
+		repeal_button.visible = is_repealable_status
+		if is_repealable_status:
+			var can_repeal := sim.can_repeal_action(action.id)
+			repeal_button.disabled = not can_repeal
+			repeal_button.text = "Derogar Política" if can_repeal else "Deroga primero políticas dependientes"
+
 
 func _on_action_selected(action_id: StringName) -> void:
 	_selected_action_id = action_id
@@ -136,7 +159,19 @@ func _on_activate_pressed() -> void:
 		_refresh_view()
 
 
+func _on_repeal_pressed() -> void:
+	if _selected_action_id != &"":
+		GameManager.repeal_action(_selected_action_id)
+		_refresh_view()
+
+
+func _on_finance_button_pressed() -> void:
+	if finance_modal:
+		finance_modal.open_breakdown(GameManager.simulation.get_finance_breakdown())
+
+
 func _on_back_to_city_pressed() -> void:
+	GameManager.exit_actions_screen()
 	get_tree().change_scene_to_file(GAME_SCENE_PATH)
 
 
@@ -148,6 +183,7 @@ func _on_game_ended(result: int) -> void:
 
 func _on_retry_requested() -> void:
 	GameManager.start_new_game()
+	GameManager.has_seen_welcome = true
 	get_tree().change_scene_to_file(GAME_SCENE_PATH)
 
 
