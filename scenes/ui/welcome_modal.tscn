@@ -1,17 +1,33 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/welcome_modal.gd" id="1_welcome"]
 
-[node name="WelcomeModal" type="ColorRect" node_paths=PackedStringArray("close_button")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.11, 0.15, 0.19, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.32, 0.44, 0.52, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="WelcomeModal" type="ColorRect" node_paths=PackedStringArray("step_label", "title_label", "body_label", "back_button", "next_button")]
 visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.72)
+color = Color(0.03, 0.05, 0.07, 0.85)
 script = ExtResource("1_welcome")
-close_button = NodePath("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/CloseButton")
+step_label = NodePath("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/StepLabel")
+title_label = NodePath("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/TitleLabel")
+body_label = NodePath("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/BodyLabel")
+back_button = NodePath("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ButtonsRow/BackButton")
+next_button = NodePath("CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ButtonsRow/NextButton")
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -22,8 +38,9 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(620, 340)
+custom_minimum_size = Vector2(580, 320)
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer"]
 layout_mode = 2
@@ -36,25 +53,36 @@ theme_override_constants/margin_bottom = 24
 layout_mode = 2
 theme_override_constants/separation = 14
 
+[node name="StepLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 0.9, 1)
+text = "Guía rápida (1 / 3)"
+horizontal_alignment = 1
+
 [node name="TitleLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 26
-text = "Bienvenido a Econtainment"
+theme_override_font_sizes/font_size = 24
+text = "1. Tu Misión"
 horizontal_alignment = 1
 
 [node name="BodyLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-text = "• Objetivo: Alcanza 100% de Salud Ambiental manteniendo la Confianza Ciudadana por encima de 70%.
-
-• Las 3 Zonas: Si la Zona Productiva o Urbana superan el 50% de polución, derraman contaminantes a la Reserva Biológica. Las zonas sanas (≤20%) aumentan la Confianza; las contaminadas (≥50%) la reducen.
-
-• Gestión y Finanzas: La partida inicia en pausa. Abre «Acciones» para analizar tus políticas (el tiempo se pausará allí) y vigila su coste mensual de mantenimiento. Cuando estés listo, pulsa «Reanudar»."
+text = "Texto de sección."
 autowrap_mode = 3
 
-[node name="CloseButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(200, 46)
+[node name="ButtonsRow" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
+alignment = 1
+theme_override_constants/separation = 16
+
+[node name="BackButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ButtonsRow"]
+custom_minimum_size = Vector2(150, 44)
+layout_mode = 2
+text = "Anterior"
+
+[node name="NextButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/ButtonsRow"]
+custom_minimum_size = Vector2(170, 44)
+layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "Entendido"
+text = "Siguiente"

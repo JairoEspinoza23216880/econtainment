@@ -7,6 +7,7 @@ var pollution: float = 0.0
 var emission_rate: float = 0.0
 var mitigation_rate: float = 0.0
 var regen_rate: float = 0.0
+var last_delta: float = 0.0
 
 
 func _init(
@@ -21,6 +22,7 @@ func _init(
 	emission_rate = p_emission_rate
 	mitigation_rate = p_mitigation_rate
 	regen_rate = p_regen_rate
+	last_delta = 0.0
 
 
 ## Aplica la ecuación ΔContaminación = Emisiones - Mitigación - RegeneraciónActiva y devuelve el cambio.
@@ -28,7 +30,8 @@ func apply_pollution_tick() -> float:
 	var previous_pollution := pollution
 	var delta := emission_rate - mitigation_rate - regen_rate
 	pollution = clampf(pollution + delta, 0.0, 100.0)
-	return pollution - previous_pollution
+	last_delta = pollution - previous_pollution
+	return last_delta
 
 
 ## Devuelve el porcentaje de limpieza ecológica (0 a 100) de esta zona.

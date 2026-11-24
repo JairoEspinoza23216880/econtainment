@@ -444,7 +444,9 @@ func _apply_spillovers() -> Dictionary:
 		if source_zone.pollution > GameBalance.SPILLOVER_POLLUTION_THRESHOLD:
 			var excess := source_zone.pollution - GameBalance.SPILLOVER_POLLUTION_THRESHOLD
 			var transfer := excess * GameBalance.SPILLOVER_TRANSFER_RATIO
+			var prev_reserve := reserve_zone.pollution
 			reserve_zone.pollution = clampf(reserve_zone.pollution + transfer, 0.0, 100.0)
+			reserve_zone.last_delta += reserve_zone.pollution - prev_reserve
 			spillovers[source_id] = transfer
 
 	return spillovers

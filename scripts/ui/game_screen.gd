@@ -50,16 +50,18 @@ func _sync_all_zones() -> void:
 
 func _on_zone_updated(zone_id: int, pollution: float) -> void:
 	var is_spilling := zone_id != GameBalance.ZoneId.RESERVE and pollution > GameBalance.SPILLOVER_POLLUTION_THRESHOLD
+	var zone: ZoneState = GameManager.simulation.zones.get(zone_id, null)
+	var delta := zone.last_delta if zone != null else 0.0
 	match zone_id:
 		GameBalance.ZoneId.PRODUCTIVE:
 			if productive_panel:
-				productive_panel.update_zone_display(pollution, is_spilling)
+				productive_panel.update_zone_display(pollution, is_spilling, delta)
 		GameBalance.ZoneId.URBAN:
 			if urban_panel:
-				urban_panel.update_zone_display(pollution, is_spilling)
+				urban_panel.update_zone_display(pollution, is_spilling, delta)
 		GameBalance.ZoneId.RESERVE:
 			if reserve_panel:
-				reserve_panel.update_zone_display(pollution, false)
+				reserve_panel.update_zone_display(pollution, false, delta)
 
 	_update_spillover_indicator()
 

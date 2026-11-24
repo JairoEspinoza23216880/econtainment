@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/ui/zone_panel.gd" id="1_zone_panel"]
 
-[node name="ZonePanel" type="PanelContainer" node_paths=PackedStringArray("title_label", "state_badge_rect", "state_label", "pollution_bar", "pollution_value_label", "spillover_label")]
+[node name="ZonePanel" type="PanelContainer" node_paths=PackedStringArray("title_label", "state_badge_rect", "state_label", "pollution_bar", "pollution_value_label", "pollution_delta_label", "spillover_label")]
 custom_minimum_size = Vector2(340, 210)
 script = ExtResource("1_zone_panel")
 title_label = NodePath("MarginContainer/VBoxContainer/TitleLabel")
@@ -10,6 +10,7 @@ state_badge_rect = NodePath("MarginContainer/VBoxContainer/VisualPlaceholder")
 state_label = NodePath("MarginContainer/VBoxContainer/VisualPlaceholder/StateLabel")
 pollution_bar = NodePath("MarginContainer/VBoxContainer/PollutionBar")
 pollution_value_label = NodePath("MarginContainer/VBoxContainer/FooterRow/PollutionValueLabel")
+pollution_delta_label = NodePath("MarginContainer/VBoxContainer/FooterRow/PollutionDeltaLabel")
 spillover_label = NodePath("MarginContainer/VBoxContainer/FooterRow/SpilloverLabel")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -55,11 +56,15 @@ show_percentage = false
 
 [node name="FooterRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="PollutionValueLabel" type="Label" parent="MarginContainer/VBoxContainer/FooterRow"]
 layout_mode = 2
-size_flags_horizontal = 3
 text = "Polución: 35%"
+
+[node name="PollutionDeltaLabel" type="Label" parent="MarginContainer/VBoxContainer/FooterRow"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="SpilloverLabel" type="Label" parent="MarginContainer/VBoxContainer/FooterRow"]
 visible = false
