@@ -37,8 +37,8 @@ const VICTORY_TRUST_THRESHOLD: float = 70.0
 const DEFEAT_THRESHOLD: float = 0.0
 
 # --- Estado inicial del jugador y las zonas ---
-const INITIAL_TRUST: float = 65.0
-const INITIAL_BUDGET: int = 20
+const INITIAL_TRUST: float = 60.0
+const INITIAL_BUDGET: int = 12
 const INITIAL_PRODUCTIVE_POLLUTION: float = 35.0
 const INITIAL_URBAN_POLLUTION: float = 30.0
 const INITIAL_RESERVE_POLLUTION: float = 25.0
@@ -60,12 +60,29 @@ const SPILLOVER_TRANSFER_RATIO: float = 0.5
 const SEVERE_SPILLOVER_THRESHOLD: float = 10.0
 
 ## Cambio pasivo de Confianza Ciudadana por tick según el estado de cada zona
-const TRUST_GAIN_PER_HEALTHY_ZONE: float = 1.2
+const TRUST_GAIN_PER_HEALTHY_ZONE: float = 1.0
 const TRUST_LOSS_PER_POLLUTED_ZONE: float = 1.8
 
-## Ingreso base de Presupuesto Verde al inicio de cada tick
+## Ingreso base de Presupuesto Verde y rampa fiscal progresiva
 const BASE_BUDGET_INCOME_PER_TICK: int = 10
 const MIN_BUDGET_INCOME_PER_TICK: int = 4
+const FISCAL_RAMP_STEP_TICKS: int = 3
+const FISCAL_RAMP_BONUS_PER_STEP: int = 1
+const FISCAL_RAMP_MAX_BONUS: int = 6
+
+## Multiplicador de recaudación ligado exclusivamente a la Confianza Ciudadana
+const TRUST_INCOME_MIN_MULTIPLIER: float = 0.45
+const TRUST_INCOME_MAX_MULTIPLIER: float = 1.15
+
+## Parámetros del sistema de burbujas interactivas (3 tipos por zona)
+const BUBBLE_BUDGET_REWARD: int = 4
+const BUBBLE_TRUST_REWARD: float = 2.0
+const BUBBLE_RESERVE_POLLUTION_REDUCTION: float = 2.5
+const BUBBLE_LIFETIME_SECONDS: float = 7.0
+const BUBBLE_BASE_SPAWN_CHANCE: float = 0.35 #0.35
+const BUBBLE_TRUST_SPAWN_BONUS: float = 0.45 #0.45
+const BUBBLE_WATCH_MULTIPLIER: float = 1.45 #1.45
+const BUBBLE_MAX_DRY_TICKS: int = 2
 
 ## Penalización base por alerta (foco rojo) ignorada; se duplica con Vigilancia Digital
 const BASE_ALERT_TRUST_PENALTY: float = 5.0

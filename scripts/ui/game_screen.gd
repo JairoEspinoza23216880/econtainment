@@ -17,6 +17,10 @@ const MAIN_MENU_PATH: String = "res://scenes/main_menu/main_menu.tscn"
 
 
 func _ready() -> void:
+	# Si se ejecuta GameScreen directamente (F6 en editor), iniciamos la partida automáticamente
+	if not GameManager.is_playing:
+		GameManager.start_new_game()
+
 	if menu_button:
 		menu_button.pressed.connect(_on_menu_button_pressed)
 	if hud_bar:
@@ -32,6 +36,7 @@ func _ready() -> void:
 		end_game_modal.main_menu_requested.connect(_on_quit_to_menu)
 
 	EventBus.zone_updated.connect(_on_zone_updated)
+	EventBus.bubble_spawned.connect(_on_bubble_spawned)
 	EventBus.game_ended.connect(_on_game_ended)
 
 	_sync_all_zones()
@@ -82,6 +87,19 @@ func _update_spillover_indicator() -> void:
 
 func _on_actions_button_pressed() -> void:
 	get_tree().change_scene_to_file(ACTIONS_SCENE_PATH)
+
+
+func _on_bubble_spawned(zone_id: int) -> void:
+	match zone_id:
+		GameBalance.ZoneId.PRODUCTIVE:
+			if productive_panel:
+				productive_panel.spawn_bubble()
+		GameBalance.ZoneId.URBAN:
+			if urban_panel:
+				urban_panel.spawn_bubble()
+		GameBalance.ZoneId.RESERVE:
+			if reserve_panel:
+				reserve_panel.spawn_bubble()
 
 
 func _on_finance_button_pressed() -> void:

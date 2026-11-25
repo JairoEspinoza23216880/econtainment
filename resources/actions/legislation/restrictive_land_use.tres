@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ActionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/action_data.gd" id="1_action"]
+
+[resource]
+script = ExtResource("1_action")
+id = &"restrictive_land_use"
+branch = 1
+title = "Restricción de Uso de Suelo"
+description = "Prohíbe rellenos o lotificaciones en humedales, restringe desechables comerciales y exige licencias ambientales estrictas."
+pros_text = "Reduce emisiones urbanas y protege la Reserva Biológica."
+cons_text = "Genera fricción inicial con comercios y desarrolladores."
+prerequisites = Array[StringName]([&"emission_standards"])
+cost_budget = 15
+maintenance_per_tick = 1
+delay_ticks = 1
+immediate_trust_delta = -3.0
+urban_emission_delta = -1.4
+reserve_mitigation_delta = 1.0

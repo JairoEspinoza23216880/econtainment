@@ -118,3 +118,64 @@ func test_defeat_dismissal() -> void:
 
 	var summary: Dictionary = engine.step_tick()
 	assert_eq(summary["game_result"], GameBalanceClass.GameResult.DEFEAT_DISMISSAL, "Debe disparar DEFEAT_DISMISSAL")
+
+
+func test_bubble_spawn_ratio_and_rewards() -> void:
+	var engine = SimulationEngineClass.new()
+	engine.trust = 20.0
+	var low_trust_chance: float = engine.calculate_bubble_spawn_chance()
+
+	engine.trust = 80.0
+	var high_trust_chance: float = engine.calculate_bubble_spawn_chance()
+	assert_gt(high_trust_chance, low_trust_chance, "Mayor Confianza debe aumentar el ratio de burbujas")
+
+	engine.early_alert_enabled = true
+	assert_gt(engine.calculate_bubble_spawn_chance(), high_trust_chance, "Vigilancia Vecinal debe potenciar el ratio")
+
+	var budget_before: int = engine.budget
+	engine.collect_bubble(GameBalanceClass.ZoneId.PRODUCTIVE)
+	assert_eq(engine.budget, budget_before + GameBalanceClass.BUBBLE_BUDGET_REWARD, "Burbuja Productiva debe dar dinero")
+
+	var trust_before: float = engine.trust
+	engine.collect_bubble(GameBalanceClass.ZoneId.URBAN)
+	assert_gt(engine.trust, trust_before, "Burbuja Urbana debe dar Confianza Ciudadana")
+
+	var reserve = engine.zones[GameBalanceClass.ZoneId.RESERVE]
+	reserve.pollution = 30.0
+	engine.collect_bubble(GameBalanceClass.ZoneId.RESERVE)
+	assert_true(reserve.pollution < 30.0, "Burbuja de Reserva debe reducir la polución de la Reserva")
+
+	# Verificar garantía tras BUBBLE_MAX_DRY_TICKS ticks sin burbujas
+	engine._ticks_without_bubble = GameBalanceClass.BUBBLE_MAX_DRY_TICKS
+	var forced_spawns: Array = engine.roll_bubble_spawns()
+	assert_gt(forced_spawns.size(), 0, "Debe garantizar al menos 1 burbuja tras alcanzar el límite de ticks secos")
+
+
+func test_fiscal_ramp_and_trust_only_income() -> void:
+	var engine = SimulationEngineClass.new()
+	assert_eq(engine.get_fiscal_ramp_bonus(), 0, "En tick 0 no debe haber bono de rampa")
+
+	engine.tick_count = 9
+	assert_eq(engine.get_fiscal_ramp_bonus(), 3, "En tick 9 la rampa debe sumar +3")
+
+	engine.tick_count = 30
+	assert_eq(
+		engine.get_fiscal_ramp_bonus(),
+		GameBalanceClass.FISCAL_RAMP_MAX_BONUS,
+		"La rampa no debe superar FISCAL_RAMP_MAX_BONUS"
+	)
+
+	# Cambiar la Salud Ambiental no debe afectar el ingreso bruto
+	engine.trust = 50.0
+	for zone in engine.zones.values():
+		zone.pollution = 90.0
+	var income_dirty: int = engine.calculate_gross_budget_income()
+
+	for zone in engine.zones.values():
+		zone.pollution = 10.0
+	var income_clean: int = engine.calculate_gross_budget_income()
+	assert_eq(income_dirty, income_clean, "La Salud Ambiental no debe alterar el ingreso bruto")
+
+	# Subir Confianza sí debe aumentar el ingreso bruto
+	engine.trust = 95.0
+	assert_gt(engine.calculate_gross_budget_income(), income_clean, "Mayor Confianza debe aumentar la recaudación")

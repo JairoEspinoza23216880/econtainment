@@ -101,6 +101,24 @@ func repeal_action(action_id: StringName) -> bool:
 	return true
 
 
+## Recolecta una burbuja de zona y aplica su recompensa inmediata.
+func collect_bubble(zone_id: int) -> void:
+	if not is_playing:
+		return
+	var prev_health := simulation.get_environmental_health()
+	var prev_trust := simulation.trust
+	var prev_budget := simulation.budget
+
+	simulation.collect_bubble(zone_id as GameBalance.ZoneId)
+
+	last_health_delta = simulation.get_environmental_health() - prev_health
+	last_trust_delta = simulation.trust - prev_trust
+	last_budget_delta = simulation.budget - prev_budget
+
+	EventBus.bubble_collected.emit(zone_id)
+	_emit_full_state()
+
+
 ## Pausa o reanuda el avance automático de ticks.
 func set_paused(paused: bool) -> void:
 	if is_paused == paused:
@@ -148,6 +166,11 @@ func _advance_tick() -> void:
 
 	_emit_full_state()
 	EventBus.tick_completed.emit(current_tick)
+
+	# Notificamos burbujas generadas al cierre del tick
+	var bubble_spawns: Array = summary.get("bubble_spawns", [])
+	for zone_id: int in bubble_spawns:
+		EventBus.bubble_spawned.emit(zone_id)
 
 	var result: int = summary.get("game_result", GameBalance.GameResult.NONE)
 	if result != GameBalance.GameResult.NONE:

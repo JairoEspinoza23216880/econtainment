@@ -14,6 +14,9 @@ func _ready() -> void:
 
 ## Actualiza las cifras desde el motor de simulación y muestra el modal.
 func open_breakdown(breakdown: Dictionary) -> void:
+	var base_income: int = breakdown.get("base_income", 0)
+	var ramp_bonus: int = breakdown.get("ramp_bonus", 0)
+	var trust_mult: float = breakdown.get("trust_multiplier", 1.0)
 	var gross: int = breakdown.get("gross_income", 0)
 	var penalty: int = breakdown.get("penalty", 0)
 	var effective: int = breakdown.get("effective_income", 0)
@@ -23,11 +26,11 @@ func open_breakdown(breakdown: Dictionary) -> void:
 
 	if summary_label:
 		summary_label.text = (
-			"Ingreso bruto por recaudación: +$%d / mes\n"
-			+ "Penalizaciones comerciales (Boicot): -$%d / mes\n"
+			"Base ($%d) + Rampa mensual ($%d) × Factor Confianza (%.0f%%) = +$%d / mes\n"
+			+ "Penalizaciones comerciales (Boicot/Clausuras): -$%d / mes\n"
 			+ "Ingreso efectivo: +$%d / mes\n"
 			+ "Mantenimiento total de políticas: -$%d / mes"
-		) % [gross, penalty, effective, total_maint]
+		) % [base_income, ramp_bonus, trust_mult * 100.0, gross, penalty, effective, total_maint]
 
 	if maintenance_list_label:
 		if items.is_empty():

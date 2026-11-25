@@ -19,31 +19,35 @@ func suite_name() -> String:
 	return "actions"
 
 
-func test_catalog_loads_nine_default_actions() -> void:
+func test_catalog_loads_eighteen_default_actions() -> void:
 	var engine = _new_engine()
 	var all_actions: Array = engine.catalog.get_all_actions()
-	assert_eq(all_actions.size(), 9, "El catálogo debe cargar las 9 acciones base desde res://resources/actions/")
+	assert_eq(all_actions.size(), 18, "El catálogo debe cargar las 18 acciones desde res://resources/actions/")
 
 
 func test_prerequisites_and_punitive_trust_penalty() -> void:
 	var engine = _new_engine()
-	engine.budget = 100
+	engine.budget = 200
 
-	# No debe permitir activar clausuras sin aprobar antes la norma de emisiones
-	assert_false(engine.can_activate_action(&"punitive_closures"), "Clausuras debe requerir emission_standards")
+	# No debe permitir activar clausuras sin aprobar antes norma base y restricción de uso de suelo
+	assert_false(engine.can_activate_action(&"punitive_closures"), "Clausuras debe requerir cadena previa")
 	assert_true(engine.activate_action(&"emission_standards"), "Debe activar la raíz emission_standards")
+	assert_true(engine.activate_action(&"restrictive_land_use"), "Debe iniciar maduración de restrictive_land_use")
+	engine.step_tick()
 	assert_true(engine.can_activate_action(&"punitive_closures"), "Ahora debe permitir punitive_closures")
 
 	var trust_before: float = engine.trust
 	assert_true(engine.activate_action(&"punitive_closures"), "Debe activar punitive_closures")
-	assert_true(is_equal_approx(engine.trust, trust_before - 15.0), "Clausuras debe restar 15% de Confianza")
+	assert_true(is_equal_approx(engine.trust, trust_before - 12.0), "Clausuras debe restar 12% de Confianza")
 
 
 func test_maturing_delay_ticks() -> void:
 	var engine = _new_engine()
-	engine.budget = 100
+	engine.budget = 200
 	engine.activate_action(&"emission_standards")
-	assert_true(engine.activate_action(&"circular_incentives"), "Debe iniciar maduración de Fomento Circular")
+	engine.activate_action(&"green_tax_incentives")
+	engine.step_tick()
+	assert_true(engine.activate_action(&"circular_incentives"), "Debe iniciar maduración de Fomento a la Economía Circular")
 
 	assert_eq(engine.get_action_status(&"circular_incentives"), engine.ActionStatus.MATURING)
 	assert_eq(engine.get_action_remaining_delay(&"circular_incentives"), 2)
@@ -57,25 +61,28 @@ func test_maturing_delay_ticks() -> void:
 	assert_eq(engine.get_action_remaining_delay(&"circular_incentives"), 0)
 
 
-func test_grey_infrastructure_suspends_on_zero_budget() -> void:
+func test_infrastructure_suspends_on_zero_budget() -> void:
 	var engine = _new_engine()
-	engine.budget = 100
+	engine.budget = 200
 	engine.activate_action(&"emergency_crews")
-	engine.activate_action(&"grey_infrastructure")
-	assert_eq(engine.get_action_status(&"grey_infrastructure"), engine.ActionStatus.ACTIVE)
+	engine.activate_action(&"stormwater_collectors")
+	engine.step_tick()
+	assert_eq(engine.get_action_status(&"stormwater_collectors"), engine.ActionStatus.ACTIVE)
 
 	# Forzamos presupuesto 0 y un costo de mantenimiento alto para probar suspensión
 	engine.budget = 0
 	engine.maintenance_cost_per_tick = 100
 	engine.step_tick()
-	assert_eq(engine.get_action_status(&"grey_infrastructure"), engine.ActionStatus.SUSPENDED)
+	assert_eq(engine.get_action_status(&"stormwater_collectors"), engine.ActionStatus.SUSPENDED)
 
 
-func test_bio_remediation_destroyed_by_severe_spill() -> void:
+func test_river_treatment_plant_destroyed_by_severe_spill() -> void:
 	var engine = _new_engine()
-	engine.budget = 100
+	engine.budget = 200
 	engine.activate_action(&"emergency_crews")
-	engine.activate_action(&"bio_remediation")
+	engine.activate_action(&"stormwater_collectors")
+	engine.step_tick()
+	assert_true(engine.activate_action(&"river_treatment_plant"), "Debe iniciar maduración de planta fluvial")
 
 	# Forzamos un derrame severo (> 10 de transferencia: 80 - 50 = 30 * 0.5 = 15)
 	var productive = engine.zones[GameBalanceClass.ZoneId.PRODUCTIVE]
@@ -84,9 +91,9 @@ func test_bio_remediation_destroyed_by_severe_spill() -> void:
 
 	var summary: Dictionary = engine.step_tick()
 	var destroyed: Array = summary["destroyed_actions"]
-	assert_true(destroyed.has(&"bio_remediation"), "El humedal debe destruirse ante un derrame severo")
-	assert_eq(engine.get_action_status(&"bio_remediation"), engine.ActionStatus.DESTROYED)
-	assert_true(engine.can_activate_action(&"bio_remediation"), "Debe permitir reconstruir el humedal destruido")
+	assert_true(destroyed.has(&"river_treatment_plant"), "La planta fluvial debe destruirse ante un derrame severo")
+	assert_eq(engine.get_action_status(&"river_treatment_plant"), engine.ActionStatus.DESTROYED)
+	assert_true(engine.can_activate_action(&"river_treatment_plant"), "Debe permitir reconstruir la planta destruida")
 
 
 func test_extensible_custom_action_registration() -> void:
@@ -108,19 +115,20 @@ func test_extensible_custom_action_registration() -> void:
 
 func test_repeal_action_and_finance_breakdown() -> void:
 	var engine = _new_engine()
-	engine.budget = 100
+	engine.budget = 200
 	engine.activate_action(&"emission_standards")
-	engine.activate_action(&"punitive_closures")
+	engine.activate_action(&"restrictive_land_use")
+	engine.step_tick()
 
-	# No se debe poder derogar la raíz mientras punitive_closures siga activa
+	# No se debe poder derogar la raíz mientras restrictive_land_use siga activa
 	assert_false(engine.can_repeal_action(&"emission_standards"), "No debe derogar raíz con hija activa")
-	assert_true(engine.can_repeal_action(&"punitive_closures"), "Debe poder derogar hoja activa")
+	assert_true(engine.can_repeal_action(&"restrictive_land_use"), "Debe poder derogar hoja activa")
 
 	var breakdown_before: Dictionary = engine.get_finance_breakdown()
 	assert_gt(breakdown_before["total_maintenance"], 0, "Debe reportar mantenimiento activo")
 
-	assert_true(engine.repeal_action(&"punitive_closures"), "Debe derogar punitive_closures")
-	assert_eq(engine.get_action_status(&"punitive_closures"), engine.ActionStatus.AVAILABLE)
+	assert_true(engine.repeal_action(&"restrictive_land_use"), "Debe derogar restrictive_land_use")
+	assert_eq(engine.get_action_status(&"restrictive_land_use"), engine.ActionStatus.AVAILABLE)
 	assert_true(engine.can_repeal_action(&"emission_standards"), "Ahora debe permitir derogar la raíz")
 
 	var breakdown_after: Dictionary = engine.get_finance_breakdown()

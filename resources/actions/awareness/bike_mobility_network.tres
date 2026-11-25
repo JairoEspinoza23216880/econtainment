@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ActionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/action_data.gd" id="1_action"]
+
+[resource]
+script = ExtResource("1_action")
+id = &"bike_mobility_network"
+branch = 0
+title = "Movilidad Ciclista Metropolitana"
+description = "Promueve el uso cotidiano de bicicleta y transporte no motorizado junto con el cuidado comunitario del entorno."
+pros_text = "Alto impacto en Zona Urbana y regeneración en Reserva Biológica, acelerando el tramo final."
+cons_text = "Coste alto y tarda 2 meses en arraigarse."
+prerequisites = Array[StringName]([&"zero_waste_culture", &"sustain_river_cleanups"])
+cost_budget = 32
+maintenance_per_tick = 2
+delay_ticks = 2
+immediate_trust_delta = 5.0
+urban_emission_delta = -1.8
+reserve_regen_delta = 2.2

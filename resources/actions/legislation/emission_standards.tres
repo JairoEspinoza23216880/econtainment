@@ -6,10 +6,10 @@
 script = ExtResource("1_action")
 id = &"emission_standards"
 branch = 1
-title = "Norma de Descargas y Emisiones"
-description = "Establece topes legales obligatorios a las descargas y chimeneas industriales."
-pros_text = "Frena el crecimiento de emisiones en la Zona Productiva."
-cons_text = "Requiere medidas complementarias para revertir la polución acumulada."
+title = "Norma Base de Emisiones"
+description = "Marco legal mínimo que fija topes a chimeneas, descargas y manejo de residuos peligrosos."
+pros_text = "Frena el crecimiento de emisiones industriales en la Zona Productiva."
+cons_text = "Requiere cuerpo de inspección mensual."
 prerequisites = Array[StringName]([])
 cost_budget = 12
 maintenance_per_tick = 1

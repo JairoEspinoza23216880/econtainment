@@ -1,6 +1,8 @@
 extends PanelContainer
 ## Panel placeholder que representa una de las 3 zonas de la ciudad y su estado ecológico.
 
+const DEFAULT_BUBBLE_SCENE: PackedScene = preload("res://scenes/game/zone_bubble.tscn")
+
 @export var zone_id: GameBalance.ZoneId = GameBalance.ZoneId.PRODUCTIVE
 @export var zone_title: String = "Zona"
 
@@ -11,6 +13,8 @@ extends PanelContainer
 @export var pollution_value_label: Label
 @export var pollution_delta_label: Label
 @export var spillover_label: Label
+@export var bubble_scene: PackedScene
+@export var bubble_container: Control
 
 
 func _ready() -> void:
@@ -53,3 +57,19 @@ func _update_delta_label(delta: float) -> void:
 	pollution_delta_label.text = "%s%.1f%%" % [sign_str, absf(delta)]
 	# Para la polución, bajar (-) es positivo (verde) y subir (+) es negativo (rojo)
 	pollution_delta_label.modulate = Color(0.45, 0.92, 0.55) if delta < 0.0 else Color(0.95, 0.4, 0.4)
+
+
+## Instancia una burbuja interactiva en una posición aleatoria dentro del área visual de la zona.
+func spawn_bubble() -> void:
+	var scene_to_spawn := bubble_scene if bubble_scene != null else DEFAULT_BUBBLE_SCENE
+	var target_container := bubble_container if bubble_container != null else state_badge_rect
+	if scene_to_spawn == null or target_container == null:
+		return
+
+	var bubble: Button = scene_to_spawn.instantiate()
+	target_container.add_child(bubble)
+	bubble.setup(zone_id)
+
+	var max_x := maxf(8.0, target_container.size.x - bubble.custom_minimum_size.x - 8.0)
+	var max_y := maxf(8.0, target_container.size.y - bubble.custom_minimum_size.y - 8.0)
+	bubble.position = Vector2(randf_range(8.0, max_x), randf_range(8.0, max_y))

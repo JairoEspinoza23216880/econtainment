@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ActionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/action_data.gd" id="1_action"]
+
+[resource]
+script = ExtResource("1_action")
+id = &"sustain_river_cleanups"
+branch = 0
+title = "Limpiezas Vecinales del Río"
+description = "Incentiva a las redes vecinales a organizar brigadas periódicas de retiro de residuos en riberas y cauces."
+pros_text = "Mitigación sostenida en la Reserva Biológica y fortalece la Confianza."
+cons_text = "Depende de mantener la coordinación comunitaria."
+prerequisites = Array[StringName]([&"neighborhood_watch"])
+cost_budget = 16
+maintenance_per_tick = 1
+delay_ticks = 0
+immediate_trust_delta = 3.0
+reserve_mitigation_delta = 1.8

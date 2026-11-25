@@ -1,6 +1,6 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene format=3 uid="uid://k7vm7ra10o3j"]
 
-[ext_resource type="Script" path="res://scripts/ui/game_screen.gd" id="1_game_screen"]
+[ext_resource type="Script" uid="uid://bki133ouqjwl" path="res://scripts/ui/game_screen.gd" id="1_game_screen"]
 [ext_resource type="PackedScene" path="res://scenes/game/zone_panel.tscn" id="2_zone_panel"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud_bar.tscn" id="3_hud_bar"]
 [ext_resource type="PackedScene" path="res://scenes/ui/pause_menu.tscn" id="4_pause_menu"]
@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/welcome_modal.tscn" id="6_welcome_modal"]
 [ext_resource type="PackedScene" path="res://scenes/ui/finance_modal.tscn" id="7_finance_modal"]
 
-[node name="GameScreen" type="Control" node_paths=PackedStringArray("menu_button", "productive_panel", "urban_panel", "reserve_panel", "spillover_arrow_label", "hud_bar", "pause_menu", "end_game_modal", "welcome_modal", "finance_modal")]
+[node name="GameScreen" type="Control" unique_id=1920314326 node_paths=PackedStringArray("menu_button", "productive_panel", "urban_panel", "reserve_panel", "spillover_arrow_label", "hud_bar", "pause_menu", "end_game_modal", "welcome_modal", "finance_modal")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -27,7 +27,7 @@ end_game_modal = NodePath("EndGameModal")
 welcome_modal = NodePath("WelcomeModal")
 finance_modal = NodePath("FinanceModal")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=2010512768]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -36,7 +36,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.133333, 0.188235, 0.227451, 1)
 
-[node name="MainVBox" type="VBoxContainer" parent="."]
+[node name="MainVBox" type="VBoxContainer" parent="." unique_id=2095168052]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -45,11 +45,11 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 0
 
-[node name="CityArea" type="Control" parent="MainVBox"]
+[node name="CityArea" type="Control" parent="MainVBox" unique_id=2021300356]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="TopBarMargin" type="MarginContainer" parent="MainVBox/CityArea"]
+[node name="TopBarMargin" type="MarginContainer" parent="MainVBox/CityArea" unique_id=371344345]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -59,21 +59,21 @@ theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 20
 
-[node name="TopBar" type="HBoxContainer" parent="MainVBox/CityArea/TopBarMargin"]
+[node name="TopBar" type="HBoxContainer" parent="MainVBox/CityArea/TopBarMargin" unique_id=889774172]
 layout_mode = 2
 
-[node name="CityTitle" type="Label" parent="MainVBox/CityArea/TopBarMargin/TopBar"]
+[node name="CityTitle" type="Label" parent="MainVBox/CityArea/TopBarMargin/TopBar" unique_id=1139795173]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 20
 text = "Área Metropolitana — Econtainment"
 
-[node name="MenuButton" type="Button" parent="MainVBox/CityArea/TopBarMargin/TopBar"]
+[node name="MenuButton" type="Button" parent="MainVBox/CityArea/TopBarMargin/TopBar" unique_id=1366433419]
 custom_minimum_size = Vector2(110, 40)
 layout_mode = 2
 text = "Menú"
 
-[node name="ZonesCenter" type="CenterContainer" parent="MainVBox/CityArea"]
+[node name="ZonesCenter" type="CenterContainer" parent="MainVBox/CityArea" unique_id=70216257]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -82,49 +82,51 @@ offset_top = 52.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ZonesVBox" type="VBoxContainer" parent="MainVBox/CityArea/ZonesCenter"]
+[node name="ZonesVBox" type="VBoxContainer" parent="MainVBox/CityArea/ZonesCenter" unique_id=731395372]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="UpperZones" type="HBoxContainer" parent="MainVBox/CityArea/ZonesCenter/ZonesVBox"]
+[node name="UpperZones" type="HBoxContainer" parent="MainVBox/CityArea/ZonesCenter/ZonesVBox" unique_id=436326849]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 48
+alignment = 1
 
-[node name="ProductiveZone" parent="MainVBox/CityArea/ZonesCenter/ZonesVBox/UpperZones" instance=ExtResource("2_zone_panel")]
+[node name="ProductiveZone" parent="MainVBox/CityArea/ZonesCenter/ZonesVBox/UpperZones" unique_id=1729154878 instance=ExtResource("2_zone_panel")]
 layout_mode = 2
-zone_id = 0
 zone_title = "Zona Productiva (Fábricas)"
+bubble_scene = null
 
-[node name="UrbanZone" parent="MainVBox/CityArea/ZonesCenter/ZonesVBox/UpperZones" instance=ExtResource("2_zone_panel")]
+[node name="UrbanZone" parent="MainVBox/CityArea/ZonesCenter/ZonesVBox/UpperZones" unique_id=1682603059 instance=ExtResource("2_zone_panel")]
 layout_mode = 2
 zone_id = 1
 zone_title = "Zona Urbana (Hogares)"
+bubble_scene = null
 
-[node name="SpilloverLabel" type="Label" parent="MainVBox/CityArea/ZonesCenter/ZonesVBox"]
+[node name="SpilloverLabel" type="Label" parent="MainVBox/CityArea/ZonesCenter/ZonesVBox" unique_id=831814885]
 layout_mode = 2
 text = "↓ Drenaje controlado (<= 50%) ↓"
 horizontal_alignment = 1
 
-[node name="ReserveCenter" type="CenterContainer" parent="MainVBox/CityArea/ZonesCenter/ZonesVBox"]
+[node name="ReserveCenter" type="CenterContainer" parent="MainVBox/CityArea/ZonesCenter/ZonesVBox" unique_id=1255380379]
 layout_mode = 2
 
-[node name="ReserveZone" parent="MainVBox/CityArea/ZonesCenter/ZonesVBox/ReserveCenter" instance=ExtResource("2_zone_panel")]
+[node name="ReserveZone" parent="MainVBox/CityArea/ZonesCenter/ZonesVBox/ReserveCenter" unique_id=206531206 instance=ExtResource("2_zone_panel")]
 layout_mode = 2
 zone_id = 2
 zone_title = "Reserva Biológica (Río)"
+bubble_scene = null
 
-[node name="HudBar" parent="MainVBox" instance=ExtResource("3_hud_bar")]
+[node name="HudBar" parent="MainVBox" unique_id=1233571446 instance=ExtResource("3_hud_bar")]
 layout_mode = 2
 
-[node name="PauseMenu" parent="." instance=ExtResource("4_pause_menu")]
+[node name="PauseMenu" parent="." unique_id=1089172645 instance=ExtResource("4_pause_menu")]
 layout_mode = 1
 
-[node name="EndGameModal" parent="." instance=ExtResource("5_end_modal")]
+[node name="EndGameModal" parent="." unique_id=1470922156 instance=ExtResource("5_end_modal")]
 layout_mode = 1
 
-[node name="WelcomeModal" parent="." instance=ExtResource("6_welcome_modal")]
+[node name="WelcomeModal" parent="." unique_id=261277217 instance=ExtResource("6_welcome_modal")]
 layout_mode = 1
 
-[node name="FinanceModal" parent="." instance=ExtResource("7_finance_modal")]
+[node name="FinanceModal" parent="." unique_id=228646145 instance=ExtResource("7_finance_modal")]
 layout_mode = 1

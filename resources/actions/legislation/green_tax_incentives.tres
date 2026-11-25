@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ActionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/action_data.gd" id="1_action"]
+
+[resource]
+script = ExtResource("1_action")
+id = &"green_tax_incentives"
+branch = 1
+title = "Incentivos Fiscales Verdes"
+description = "Estímulos fiscales y certificación pública para empresas que inicien transición hacia procesos limpios."
+pros_text = "Cero coste político y reducción gradual de emisiones industriales."
+cons_text = "Tarda 1 mes en procesarse y reduce levemente la recaudación inicial."
+prerequisites = Array[StringName]([&"emission_standards"])
+cost_budget = 18
+maintenance_per_tick = 1
+delay_ticks = 1
+immediate_trust_delta = 2.0
+budget_income_penalty = 1
+productive_emission_delta = -1.2

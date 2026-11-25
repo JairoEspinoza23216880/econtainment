@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ActionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/action_data.gd" id="1_action"]
+
+[resource]
+script = ExtResource("1_action")
+id = &"river_treatment_plant"
+branch = 2
+title = "Planta de Tratamiento Fluvial"
+description = "Planta pública que trata las aguas canalizadas por los colectores, apoyada por biofiltros en la Reserva."
+pros_text = "Máxima limpieza y regeneración biológica en la Reserva."
+cons_text = "Vulnerable: un derrame severo la destruye y obliga a reconstruirla; requiere presupuesto positivo."
+prerequisites = Array[StringName]([&"stormwater_collectors"])
+cost_budget = 28
+maintenance_per_tick = 3
+delay_ticks = 2
+immediate_trust_delta = 2.0
+reserve_mitigation_delta = 2.2
+reserve_regen_delta = 3.0
+requires_positive_budget = true
+vulnerable_to_severe_spill = true

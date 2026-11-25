@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ActionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/action_data.gd" id="1_action"]
+
+[resource]
+script = ExtResource("1_action")
+id = &"metro_green_infrastructure"
+branch = 2
+title = "Infraestructura Verde Metropolitana"
+description = "Red integral de plantas de reciclaje, movilidad limpia y corredores biológicos conectados en toda la ciudad."
+pros_text = "Mitigación y regeneración masiva en las tres zonas para acelerar el tramo final."
+cons_text = "Mantenimiento alto cada mes y se apaga si el presupuesto llega a $0."
+prerequisites = Array[StringName]([&"modern_public_transit", &"river_treatment_plant"])
+cost_budget = 38
+maintenance_per_tick = 4
+delay_ticks = 1
+immediate_trust_delta = 4.0
+productive_mitigation_delta = 2.5
+urban_mitigation_delta = 2.5
+reserve_regen_delta = 2.5
+requires_positive_budget = true

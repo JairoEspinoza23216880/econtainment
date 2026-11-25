@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ActionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/action_data.gd" id="1_action"]
+
+[resource]
+script = ExtResource("1_action")
+id = &"modern_public_transit"
+branch = 2
+title = "Transporte Público Moderno"
+description = "Renovación de rutas y autobuses hacia unidades de bajas emisiones para reducir la contaminación vehicular en origen."
+pros_text = "Fuerte reducción de emisiones urbanas y aumento de Confianza."
+cons_text = "Tarda 2 meses, tiene mantenimiento mensual y se suspende si el presupuesto llega a $0."
+prerequisites = Array[StringName]([&"productive_tech_conversion"])
+cost_budget = 28
+maintenance_per_tick = 2
+delay_ticks = 2
+immediate_trust_delta = 3.0
+urban_emission_delta = -2.5
+requires_positive_budget = true

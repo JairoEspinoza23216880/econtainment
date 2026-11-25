@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/zone_bubble.gd" id="1_bubble"]
+
+[node name="ZoneBubble" type="Button"]
+custom_minimum_size = Vector2(96, 44)
+offset_right = 96.0
+offset_bottom = 44.0
+theme_override_font_sizes/font_size = 14
+text = "+$4"
+script = ExtResource("1_bubble")

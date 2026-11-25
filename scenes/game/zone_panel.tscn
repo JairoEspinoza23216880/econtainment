@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/zone_panel.gd" id="1_zone_panel"]
+[ext_resource type="PackedScene" path="res://scenes/game/zone_bubble.tscn" id="2_bubble"]
 
-[node name="ZonePanel" type="PanelContainer" node_paths=PackedStringArray("title_label", "state_badge_rect", "state_label", "pollution_bar", "pollution_value_label", "pollution_delta_label", "spillover_label")]
+[node name="ZonePanel" type="PanelContainer" node_paths=PackedStringArray("title_label", "state_badge_rect", "state_label", "pollution_bar", "pollution_value_label", "pollution_delta_label", "spillover_label", "bubble_container")]
 custom_minimum_size = Vector2(340, 210)
 script = ExtResource("1_zone_panel")
 title_label = NodePath("MarginContainer/VBoxContainer/TitleLabel")
@@ -12,6 +13,8 @@ pollution_bar = NodePath("MarginContainer/VBoxContainer/PollutionBar")
 pollution_value_label = NodePath("MarginContainer/VBoxContainer/FooterRow/PollutionValueLabel")
 pollution_delta_label = NodePath("MarginContainer/VBoxContainer/FooterRow/PollutionDeltaLabel")
 spillover_label = NodePath("MarginContainer/VBoxContainer/FooterRow/SpilloverLabel")
+bubble_scene = ExtResource("2_bubble")
+bubble_container = NodePath("MarginContainer/VBoxContainer/VisualPlaceholder")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2

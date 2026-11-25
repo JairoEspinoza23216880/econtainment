@@ -29,9 +29,12 @@ var maintenance_cost_per_tick: int = 0
 var last_budget_depleted: bool = false
 var early_alert_enabled: bool = false
 var missed_alert_multiplier: float = 1.0
+var _ticks_without_bubble: int = 0
+var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
 
 func _init(p_load_catalog: bool = true) -> void:
+	_rng.randomize()
 	if p_load_catalog:
 		catalog.load_from_directory()
 	reset()
@@ -48,6 +51,7 @@ func reset() -> void:
 	last_budget_depleted = false
 	early_alert_enabled = false
 	missed_alert_multiplier = 1.0
+	_ticks_without_bubble = 0
 
 	zones = {
 		GameBalance.ZoneId.PRODUCTIVE: ZoneState.new(
@@ -188,15 +192,27 @@ func repeal_action(action_id: StringName) -> bool:
 	return true
 
 
+## Calcula el bono de rampa fiscal progresiva según los meses (ticks) transcurridos.
+func get_fiscal_ramp_bonus() -> int:
+	@warning_ignore("integer_division")
+	var steps := tick_count / GameBalance.FISCAL_RAMP_STEP_TICKS
+	return mini(steps * GameBalance.FISCAL_RAMP_BONUS_PER_STEP, GameBalance.FISCAL_RAMP_MAX_BONUS)
+
+
+## Calcula el multiplicador de recaudación ligado únicamente a la Confianza Ciudadana.
+func get_trust_income_multiplier() -> float:
+	var trust_factor := clampf(trust / 100.0, 0.0, 1.0)
+	return lerpf(GameBalance.TRUST_INCOME_MIN_MULTIPLIER, GameBalance.TRUST_INCOME_MAX_MULTIPLIER, trust_factor)
+
+
 ## Calcula el ingreso bruto antes de penalizaciones por boicot o similares.
 func calculate_gross_budget_income() -> int:
-	var health_factor := get_environmental_health() / 100.0
-	var trust_factor := trust / 100.0
-	var multiplier := 0.5 + 0.5 * ((health_factor + trust_factor) * 0.5)
-	return roundi(float(GameBalance.BASE_BUDGET_INCOME_PER_TICK) * multiplier)
+	var fiscal_base := GameBalance.BASE_BUDGET_INCOME_PER_TICK + get_fiscal_ramp_bonus()
+	var multiplier := get_trust_income_multiplier()
+	return roundi(float(fiscal_base) * multiplier)
 
 
-## Calcula el ingreso de Presupuesto Verde para el tick actual según Confianza y Salud.
+## Calcula el ingreso de Presupuesto Verde para el tick actual según Rampa Fiscal y Confianza.
 func calculate_budget_income() -> int:
 	var raw_income := calculate_gross_budget_income()
 	return maxi(raw_income - budget_income_penalty, GameBalance.MIN_BUDGET_INCOME_PER_TICK)
@@ -204,6 +220,8 @@ func calculate_budget_income() -> int:
 
 ## Devuelve un desglose financiero detallado del flujo mensual de Presupuesto Verde.
 func get_finance_breakdown() -> Dictionary:
+	var ramp_bonus := get_fiscal_ramp_bonus()
+	var trust_multiplier := get_trust_income_multiplier()
 	var gross_income := calculate_gross_budget_income()
 	var effective_income := calculate_budget_income()
 	var maintenance_items: Array[Dictionary] = []
@@ -216,6 +234,9 @@ func get_finance_breakdown() -> Dictionary:
 			})
 
 	return {
+		"base_income": GameBalance.BASE_BUDGET_INCOME_PER_TICK,
+		"ramp_bonus": ramp_bonus,
+		"trust_multiplier": trust_multiplier,
 		"gross_income": gross_income,
 		"penalty": budget_income_penalty,
 		"effective_income": effective_income,
@@ -228,7 +249,7 @@ func get_finance_breakdown() -> Dictionary:
 ## Ejecuta un tick completo de simulación y devuelve un diccionario resumen para la UI.
 func step_tick() -> Dictionary:
 	if game_result != GameBalance.GameResult.NONE:
-		return _build_summary({}, [], 0.0, 0.0, 0)
+		return _build_summary({}, [], 0.0, 0.0, 0, [])
 
 	var prev_health := get_environmental_health()
 	var prev_trust := trust
@@ -278,11 +299,65 @@ func step_tick() -> Dictionary:
 	# 6. Verificación de condiciones de Victoria o Derrota
 	game_result = evaluate_game_result()
 
+	# 7. Aparición de burbujas interactivas (solo si la partida continúa)
+	var bubble_spawns: Array[int] = []
+	if game_result == GameBalance.GameResult.NONE:
+		bubble_spawns = roll_bubble_spawns()
+
 	var health_delta := get_environmental_health() - prev_health
 	var trust_delta := trust - prev_trust
 	var budget_delta := budget - prev_budget
 
-	return _build_summary(spillovers, destroyed_actions, health_delta, trust_delta, budget_delta)
+	return _build_summary(spillovers, destroyed_actions, health_delta, trust_delta, budget_delta, bubble_spawns)
+
+
+## Calcula la probabilidad de aparición de burbuja en el tick según Confianza y Vigilancia Vecinal.
+func calculate_bubble_spawn_chance() -> float:
+	var chance := GameBalance.BUBBLE_BASE_SPAWN_CHANCE + GameBalance.BUBBLE_TRUST_SPAWN_BONUS * (trust / 100.0)
+	if early_alert_enabled:
+		chance *= GameBalance.BUBBLE_WATCH_MULTIPLIER
+	return clampf(chance, 0.0, 0.95)
+
+
+## Sortea en qué zonas aparecen burbujas durante este tick (garantiza una tras BUBBLE_MAX_DRY_TICKS sin burbujas).
+func roll_bubble_spawns(custom_rng: RandomNumberGenerator = null) -> Array[int]:
+	var generator := custom_rng if custom_rng != null else _rng
+	var spawns: Array[int] = []
+	var chance := calculate_bubble_spawn_chance()
+	var force_spawn := _ticks_without_bubble >= GameBalance.BUBBLE_MAX_DRY_TICKS
+
+	if force_spawn or generator.randf() < chance:
+		_ticks_without_bubble = 0
+		var zone_ids: Array[int] = [
+			GameBalance.ZoneId.PRODUCTIVE,
+			GameBalance.ZoneId.URBAN,
+			GameBalance.ZoneId.RESERVE,
+		]
+		spawns.append(zone_ids[generator.randi() % zone_ids.size()])
+
+		# Con Vigilancia Digital activa y alta Confianza (>60%), puede aparecer una segunda burbuja
+		if early_alert_enabled and trust > 60.0 and generator.randf() < (chance * 0.45):
+			spawns.append(zone_ids[generator.randi() % zone_ids.size()])
+	else:
+		_ticks_without_bubble += 1
+
+	return spawns
+
+
+## Aplica la recompensa correspondiente al recolectar una burbuja de zona.
+func collect_bubble(zone_id: GameBalance.ZoneId) -> Dictionary:
+	match zone_id:
+		GameBalance.ZoneId.PRODUCTIVE:
+			budget += GameBalance.BUBBLE_BUDGET_REWARD
+			return {"zone_id": zone_id, "reward_text": "+$%d" % GameBalance.BUBBLE_BUDGET_REWARD}
+		GameBalance.ZoneId.URBAN:
+			trust = clampf(trust + GameBalance.BUBBLE_TRUST_REWARD, 0.0, 100.0)
+			return {"zone_id": zone_id, "reward_text": "+%.1f%% CC" % GameBalance.BUBBLE_TRUST_REWARD}
+		GameBalance.ZoneId.RESERVE:
+			var reserve: ZoneState = zones[GameBalance.ZoneId.RESERVE]
+			reserve.pollution = clampf(reserve.pollution - GameBalance.BUBBLE_RESERVE_POLLUTION_REDUCTION, 0.0, 100.0)
+			return {"zone_id": zone_id, "reward_text": "-%.1f%% Pol." % GameBalance.BUBBLE_RESERVE_POLLUTION_REDUCTION}
+	return {}
 
 
 ## Evalúa si se ha cumplido alguna condición de fin de partida.
@@ -400,6 +475,7 @@ func _recompute_modifiers() -> void:
 	budget_income_penalty = 0
 	early_alert_enabled = false
 	missed_alert_multiplier = 1.0
+	_ticks_without_bubble = 0
 
 	for action_id: StringName in action_states.keys():
 		var state: Dictionary = action_states[action_id]
@@ -457,7 +533,8 @@ func _build_summary(
 	destroyed_actions: Array[StringName],
 	health_delta: float,
 	trust_delta: float,
-	budget_delta: int
+	budget_delta: int,
+	bubble_spawns: Array[int]
 ) -> Dictionary:
 	return {
 		"tick": tick_count,
@@ -470,5 +547,6 @@ func _build_summary(
 		"budget_depleted": last_budget_depleted,
 		"spillovers": spillovers,
 		"destroyed_actions": destroyed_actions,
+		"bubble_spawns": bubble_spawns,
 		"game_result": game_result,
 	}
