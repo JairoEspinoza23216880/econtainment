@@ -9,14 +9,10 @@ var _actions_by_id: Dictionary = {}
 var _ordered_ids: Array[StringName] = []
 
 
-## Carga todos los archivos .tres válidos dentro del directorio de acciones.
+## Carga todos los archivos .tres válidos dentro del directorio de acciones (compatible con .pck exportado).
 func load_from_directory(directory_path: String = ACTIONS_DIR) -> void:
 	_actions_by_id.clear()
 	_ordered_ids.clear()
-
-	if not DirAccess.dir_exists_absolute(directory_path):
-		return
-
 	_scan_directory(directory_path)
 
 
@@ -53,20 +49,14 @@ func get_actions_by_branch(branch: GameBalance.BranchType) -> Array[ActionDataCl
 
 
 func _scan_directory(path: String) -> void:
-	var dir := DirAccess.open(path)
-	if dir == null:
-		return
-
-	dir.list_dir_begin()
-	var file_name := dir.get_next()
-	while file_name != "":
-		if not file_name.begins_with("."):
-			var full_path := path.path_join(file_name)
-			if dir.current_is_dir():
-				_scan_directory(full_path)
-			elif file_name.ends_with(".tres"):
-				var resource := ResourceLoader.load(full_path)
-				if resource is ActionDataClass:
-					register_action(resource)
-		file_name = dir.get_next()
-	dir.list_dir_end()
+	# ResourceLoader.list_directory funciona tanto en editor como dentro del .pck exportado (Web/Android)
+	var entries := ResourceLoader.list_directory(path)
+	for entry: String in entries:
+		if entry.ends_with("/"):
+			var sub_dir := path.path_join(entry.trim_suffix("/"))
+			_scan_directory(sub_dir)
+		elif entry.ends_with(".tres"):
+			var full_path := path.path_join(entry)
+			var resource := ResourceLoader.load(full_path)
+			if resource is ActionDataClass:
+				register_action(resource)
