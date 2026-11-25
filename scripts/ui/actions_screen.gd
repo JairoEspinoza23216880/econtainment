@@ -112,12 +112,24 @@ func _refresh_detail_panel() -> void:
 		detail_cons_label.text = "Riesgos: %s" % action.cons_text
 
 	var delay_str := "%d ticks" % action.delay_ticks if action.delay_ticks > 0 else "Inmediato"
+	var rule_notes: PackedStringArray = []
+	if action.requires_positive_budget:
+		rule_notes.append("⚠ Se suspende si presupuesto = $0")
+	if action.vulnerable_to_severe_spill:
+		rule_notes.append("⚠ Vulnerable a derrame severo")
+	if action.budget_income_penalty > 0:
+		rule_notes.append("⚠ Penaliza ingreso -$%d/mes" % action.budget_income_penalty)
+
+	var cost_text := "Coste: $%d  |  Mantenimiento: $%d/mes  |  Activación: %s" % [
+		action.cost_budget,
+		action.maintenance_per_tick,
+		delay_str,
+	]
+	if not rule_notes.is_empty():
+		cost_text += "\n" + "  •  ".join(rule_notes)
+
 	if detail_cost_label:
-		detail_cost_label.text = "Coste: $%d  |  Mantenimiento: $%d/mes  |  Activación: %s" % [
-			action.cost_budget,
-			action.maintenance_per_tick,
-			delay_str,
-		]
+		detail_cost_label.text = cost_text
 
 	var status := sim.get_action_status(action.id)
 	if activate_button:

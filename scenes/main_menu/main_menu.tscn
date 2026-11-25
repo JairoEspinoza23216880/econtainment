@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_main_menu"]
 
-[node name="MainMenu" type="Control" node_paths=PackedStringArray("play_button", "quit_button")]
+[node name="MainMenu" type="Control" node_paths=PackedStringArray("play_button", "tutorial_button", "quit_button")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,6 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_main_menu")
 play_button = NodePath("MarginContainer/VBoxContainer/ButtonsContainer/PlayButton")
+tutorial_button = NodePath("MarginContainer/VBoxContainer/ButtonsContainer/TutorialButton")
 quit_button = NodePath("MarginContainer/VBoxContainer/ButtonsContainer/QuitButton")
 
 [node name="Background" type="ColorRect" parent="."]
@@ -48,16 +49,22 @@ text = "ECONTAINMENT"
 [node name="ButtonsContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
-theme_override_constants/separation = 16
+theme_override_constants/separation = 14
 
 [node name="PlayButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer"]
-custom_minimum_size = Vector2(220, 56)
+custom_minimum_size = Vector2(240, 54)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 22
 text = "Jugar"
 
-[node name="QuitButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer"]
-custom_minimum_size = Vector2(220, 56)
+[node name="TutorialButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 54)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 20
+text = "Jugar Tutorial"
+
+[node name="QuitButton" type="Button" parent="MarginContainer/VBoxContainer/ButtonsContainer"]
+custom_minimum_size = Vector2(240, 54)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "Salir"

@@ -9,8 +9,10 @@ var speed_multiplier: float = GameBalance.SPEED_MULTIPLIER_NORMAL
 var current_tick: int = 0
 var tick_elapsed: float = 0.0
 
-# Estado de onboarding y pausa contextual en ActionsScreen
+# Estado de onboarding, tutorial y pausa contextual en ActionsScreen
+var tutorial_enabled: bool = false
 var has_seen_welcome: bool = false
+var shown_tutorial_hints: Dictionary = {}
 var _in_actions_screen: bool = false
 var _was_paused_before_actions: bool = true
 
@@ -31,15 +33,17 @@ func _process(delta: float) -> void:
 		_advance_tick()
 
 
-## Inicia una nueva partida en pausa táctica para que el jugador lea el resumen inicial.
-func start_new_game() -> void:
+## Inicia una nueva partida en pausa táctica; enable_tutorial activa guías y avisos iniciales.
+func start_new_game(enable_tutorial: bool = false) -> void:
 	simulation.reset()
 	current_tick = 0
 	tick_elapsed = 0.0
 	is_paused = true
 	speed_multiplier = GameBalance.SPEED_MULTIPLIER_NORMAL
 	is_playing = true
+	tutorial_enabled = enable_tutorial
 	has_seen_welcome = false
+	shown_tutorial_hints.clear()
 	_in_actions_screen = false
 	_was_paused_before_actions = true
 	last_health_delta = 0.0
@@ -48,6 +52,16 @@ func start_new_game() -> void:
 
 	EventBus.time_scale_changed.emit(is_paused, speed_multiplier)
 	_emit_full_state()
+
+
+## Indica si debe mostrarse un aviso contextual de tutorial (solo la primera vez por partida).
+func should_show_hint(hint_id: StringName) -> bool:
+	if not tutorial_enabled:
+		return false
+	if shown_tutorial_hints.has(hint_id):
+		return false
+	shown_tutorial_hints[hint_id] = true
+	return true
 
 
 ## Detiene la simulación activa (por ejemplo al volver al menú principal).
@@ -163,6 +177,13 @@ func _advance_tick() -> void:
 	var spillovers: Dictionary = summary.get("spillovers", {})
 	for source_id: int in spillovers.keys():
 		EventBus.spillover_occurred.emit(source_id, spillovers[source_id])
+
+	# Notificamos presupuesto agotado y obras destruidas por derrame severo
+	if summary.get("budget_depleted", false):
+		EventBus.budget_depleted.emit()
+	var destroyed: Array = summary.get("destroyed_actions", [])
+	for action_id: StringName in destroyed:
+		EventBus.action_destroyed.emit(action_id)
 
 	_emit_full_state()
 	EventBus.tick_completed.emit(current_tick)

@@ -8,7 +8,19 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/welcome_modal.tscn" id="6_welcome_modal"]
 [ext_resource type="PackedScene" path="res://scenes/ui/finance_modal.tscn" id="7_finance_modal"]
 
-[node name="GameScreen" type="Control" unique_id=1920314326 node_paths=PackedStringArray("menu_button", "productive_panel", "urban_panel", "reserve_panel", "spillover_arrow_label", "hud_bar", "pause_menu", "end_game_modal", "welcome_modal", "finance_modal")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tutorial_banner"]
+bg_color = Color(0.11, 0.19, 0.25, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.38, 0.72, 0.88, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="GameScreen" type="Control" unique_id=1920314326 node_paths=PackedStringArray("menu_button", "productive_panel", "urban_panel", "reserve_panel", "spillover_arrow_label", "hud_bar", "pause_menu", "end_game_modal", "welcome_modal", "finance_modal", "tutorial_banner", "tutorial_banner_label", "tutorial_banner_close_button")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -26,6 +38,9 @@ pause_menu = NodePath("PauseMenu")
 end_game_modal = NodePath("EndGameModal")
 welcome_modal = NodePath("WelcomeModal")
 finance_modal = NodePath("FinanceModal")
+tutorial_banner = NodePath("TutorialBanner")
+tutorial_banner_label = NodePath("TutorialBanner/MarginContainer/HBoxContainer/BannerLabel")
+tutorial_banner_close_button = NodePath("TutorialBanner/MarginContainer/HBoxContainer/CloseBannerButton")
 
 [node name="Background" type="ColorRect" parent="." unique_id=2010512768]
 layout_mode = 1
@@ -130,3 +145,38 @@ layout_mode = 1
 
 [node name="FinanceModal" parent="." unique_id=228646145 instance=ExtResource("7_finance_modal")]
 layout_mode = 1
+
+[node name="TutorialBanner" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -380.0
+offset_top = 12.0
+offset_right = 380.0
+offset_bottom = 66.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_tutorial_banner")
+
+[node name="MarginContainer" type="MarginContainer" parent="TutorialBanner"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TutorialBanner/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="BannerLabel" type="Label" parent="TutorialBanner/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Aviso de tutorial"
+autowrap_mode = 3
+
+[node name="CloseBannerButton" type="Button" parent="TutorialBanner/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+text = "×"

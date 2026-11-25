@@ -42,8 +42,20 @@ func _ready() -> void:
 	EventBus.tick_completed.connect(_on_tick_completed)
 	EventBus.time_scale_changed.connect(_on_time_scale_changed)
 
+	_apply_tooltips()
 	# Sincronizamos con el estado actual al instanciar la escena
 	_refresh_from_manager()
+
+
+func _apply_tooltips() -> void:
+	if health_bar:
+		health_bar.tooltip_text = "Promedio de limpieza de las 3 zonas. Meta de victoria: 100% (0% = Derrota)."
+	if trust_bar:
+		trust_bar.tooltip_text = "Aprobación social y motor de recaudación. Requiere >70% para ganar (0% = Derrota)."
+	if budget_value_label:
+		budget_value_label.tooltip_text = "Presupuesto Verde disponible. Revisa «Finanzas» para ver ingresos y mantenimiento."
+	if finance_button:
+		finance_button.tooltip_text = "Ver desglose de recaudación mensual, rampa fiscal y mantenimiento activo."
 
 
 func _process(_delta: float) -> void:
