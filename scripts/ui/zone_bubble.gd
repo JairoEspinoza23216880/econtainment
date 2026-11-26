@@ -7,7 +7,7 @@ var _remaining_lifetime: float = GameBalance.BUBBLE_LIFETIME_SECONDS
 
 
 func _ready() -> void:
-	z_index = 10
+	z_index = 1
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	pressed.connect(_on_pressed)
 

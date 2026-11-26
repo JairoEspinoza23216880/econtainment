@@ -1,10 +1,22 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/actions_screen.gd" id="1_actions_screen"]
 [ext_resource type="PackedScene" path="res://scenes/actions/action_tree_canvas.tscn" id="2_tree_canvas"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud_bar.tscn" id="3_hud_bar"]
 [ext_resource type="PackedScene" path="res://scenes/ui/end_game_modal.tscn" id="4_end_modal"]
 [ext_resource type="PackedScene" path="res://scenes/ui/finance_modal.tscn" id="5_finance_modal"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cost_box"]
+bg_color = Color(0.16, 0.22, 0.27, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.36, 0.48, 0.58, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [node name="ActionsScreen" type="Control" node_paths=PackedStringArray("awareness_tab_button", "legislation_tab_button", "direct_tab_button", "tree_canvas", "detail_title_label", "detail_desc_label", "detail_pros_label", "detail_cons_label", "detail_cost_label", "activate_button", "repeal_button", "hud_bar", "end_game_modal", "finance_modal")]
 layout_mode = 3
@@ -22,7 +34,7 @@ detail_title_label = NodePath("WorkspaceSplit/RightDetailPanel/MarginContainer/V
 detail_desc_label = NodePath("WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailScroll/DetailContentVBox/DetailDesc")
 detail_pros_label = NodePath("WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailScroll/DetailContentVBox/DetailPros")
 detail_cons_label = NodePath("WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailScroll/DetailContentVBox/DetailCons")
-detail_cost_label = NodePath("WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailCost")
+detail_cost_label = NodePath("WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailCostBox/MarginContainer/DetailCost")
 activate_button = NodePath("WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/ButtonsVBox/ActivateButton")
 repeal_button = NodePath("WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/ButtonsVBox/RepealButton")
 hud_bar = NodePath("HudBar")
@@ -87,7 +99,7 @@ clip_contents = true
 custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 2.0
+size_flags_stretch_ratio = 1.0
 
 [node name="ScrollContainer" type="ScrollContainer" parent="WorkspaceSplit/LeftTreePanel"]
 layout_mode = 2
@@ -152,7 +164,18 @@ size_flags_horizontal = 3
 text = "Descripción"
 autowrap_mode = 3
 
-[node name="DetailCost" type="Label" parent="WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer"]
+[node name="DetailCostBox" type="PanelContainer" parent="WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_cost_box")
+
+[node name="MarginContainer" type="MarginContainer" parent="WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailCostBox"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="DetailCost" type="Label" parent="WorkspaceSplit/RightDetailPanel/MarginContainer/VBoxContainer/DetailCostBox/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Coste: $0"

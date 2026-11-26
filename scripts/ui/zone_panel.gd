@@ -45,6 +45,22 @@ func update_zone_display(pollution: float, is_spilling: bool, delta: float = 0.0
 		state_badge_rect.color = color
 	if state_label:
 		state_label.text = state_text
+	if pollution_bar:
+		_apply_bar_color(pollution_bar, color)
+
+
+func _apply_bar_color(bar: ProgressBar, fill_color: Color) -> void:
+	bar.custom_minimum_size.y = maxf(bar.custom_minimum_size.y, 18.0)
+	var bg := StyleBoxFlat.new()
+	bg.bg_color = Color(0.06, 0.09, 0.12, 1.0)
+	bg.set_corner_radius_all(4)
+	bg.content_margin_top = 4
+	bg.content_margin_bottom = 4
+	var fill := StyleBoxFlat.new()
+	fill.bg_color = fill_color
+	fill.set_corner_radius_all(4)
+	bar.add_theme_stylebox_override("background", bg)
+	bar.add_theme_stylebox_override("fill", fill)
 
 
 func _update_delta_label(delta: float) -> void:

@@ -10,28 +10,55 @@ func _ready() -> void:
 	pressed.connect(func() -> void: action_selected.emit(action_id))
 
 
-## Configura el texto y estilo visual según el ActionData y su estado actual.
+## Configura el texto, color por estado y reborde blanco si está seleccionada.
 func setup(action: ActionData, status: SimulationEngine.ActionStatus, remaining_delay: int, is_selected: bool) -> void:
 	action_id = action.id
 	var status_tag := _get_status_tag(status, remaining_delay)
 	text = "%s\n$%d  •  %s" % [action.title, action.cost_budget, status_tag]
 
+	var bg_color := Color(0.24, 0.30, 0.36, 1.0)
 	match status:
 		SimulationEngine.ActionStatus.LOCKED:
-			modulate = Color(0.55, 0.55, 0.55)
+			bg_color = Color(0.20, 0.22, 0.25, 0.92)
 		SimulationEngine.ActionStatus.AVAILABLE:
-			modulate = Color(0.95, 0.95, 0.95)
+			bg_color = Color(0.24, 0.31, 0.38, 1.0)
 		SimulationEngine.ActionStatus.MATURING:
-			modulate = Color(0.95, 0.82, 0.38)
+			bg_color = Color(0.55, 0.44, 0.14, 1.0)
 		SimulationEngine.ActionStatus.ACTIVE:
-			modulate = Color(0.45, 0.90, 0.55)
+			bg_color = Color(0.16, 0.46, 0.26, 1.0)
 		SimulationEngine.ActionStatus.SUSPENDED:
-			modulate = Color(0.90, 0.55, 0.30)
+			bg_color = Color(0.58, 0.32, 0.14, 1.0)
 		SimulationEngine.ActionStatus.DESTROYED:
-			modulate = Color(0.95, 0.35, 0.35)
+			bg_color = Color(0.56, 0.17, 0.17, 1.0)
 
+	_apply_node_style(bg_color, is_selected)
+
+
+func _apply_node_style(bg_color: Color, is_selected: bool) -> void:
+	modulate = Color.WHITE
+	var normal := StyleBoxFlat.new()
+	normal.bg_color = bg_color.lightened(0.08) if is_selected else bg_color
+	normal.set_corner_radius_all(8)
 	if is_selected:
-		modulate = modulate.lightened(0.2)
+		normal.set_border_width_all(3)
+		normal.border_color = Color.WHITE
+	else:
+		normal.set_border_width_all(1)
+		normal.border_color = bg_color.lightened(0.28)
+
+	var hover := normal.duplicate()
+	hover.bg_color = normal.bg_color.lightened(0.12)
+
+	var pressed := normal.duplicate()
+	pressed.bg_color = normal.bg_color.darkened(0.14)
+
+	add_theme_stylebox_override("normal", normal)
+	add_theme_stylebox_override("hover", hover)
+	add_theme_stylebox_override("pressed", pressed)
+	add_theme_stylebox_override("focus", normal)
+	add_theme_color_override("font_color", Color.WHITE)
+	add_theme_color_override("font_hover_color", Color.WHITE)
+	add_theme_color_override("font_pressed_color", Color.WHITE)
 
 
 func _get_status_tag(status: SimulationEngine.ActionStatus, remaining_delay: int) -> String:

@@ -140,7 +140,7 @@ theme_override_constants/margin_right = 20
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="SpilloverBanner" type="PanelContainer" parent="MainVBox/CityArea/TopBarMargin/TopBar"]
+[node name="SpilloverBanner" type="PanelContainer" parent="MainVBox/CityArea/TopBarMargin/TopBar" unique_id=991472879]
 layout_mode = 2
 
 [node name="SpilloverLabel" type="Label" parent="MainVBox/CityArea/TopBarMargin/TopBar/SpilloverBanner" unique_id=303848149]
@@ -150,7 +150,7 @@ text = "Contaminación Contenible"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TopSpacer" type="Control" parent="MainVBox/CityArea/TopBarMargin/TopBar"]
+[node name="TopSpacer" type="Control" parent="MainVBox/CityArea/TopBarMargin/TopBar" unique_id=2137651364]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2

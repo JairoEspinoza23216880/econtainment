@@ -49,7 +49,7 @@ func start_new_game(enable_tutorial: bool = false) -> void:
 	has_seen_welcome = false
 	shown_tutorial_hints.clear()
 	last_actions_branch = GameBalance.BranchType.AWARENESS
-	show_pollution_overlay = false
+	show_pollution_overlay = true
 	active_bubbles.clear()
 	_next_bubble_uid = 1
 	_in_actions_screen = false

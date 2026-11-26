@@ -16,6 +16,7 @@ corner_radius_bottom_left = 10
 
 [node name="EndGameModal" type="ColorRect" node_paths=PackedStringArray("title_label", "description_label", "stats_label", "retry_button", "menu_button")]
 visible = false
+z_index = 50
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

@@ -16,6 +16,7 @@ corner_radius_bottom_left = 10
 
 [node name="WelcomeModal" type="ColorRect" node_paths=PackedStringArray("step_label", "title_label", "body_label", "back_button", "next_button")]
 visible = false
+z_index = 50
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

@@ -26,10 +26,10 @@ enum GameResult {
 
 # --- Configuración de tiempo (Ticks) ---
 ## Duración base de un tick (1 mes simulado) en segundos a velocidad 1x
-const TICK_DURATION_SECONDS: float = 10.0
+const TICK_DURATION_SECONDS: float = 5.0
+const SPEED_MULTIPLIER_SLOW: float = 0.5
 const SPEED_MULTIPLIER_NORMAL: float = 1.0
-const SPEED_MULTIPLIER_FAST: float = 2.0
-const SPEED_MULTIPLIER_ULTRA: float = 3.0
+const SPEED_MULTIPLIER_FAST: float = 1.5
 
 # --- Condiciones de fin de partida ---
 const VICTORY_HEALTH_THRESHOLD: float = 100.0

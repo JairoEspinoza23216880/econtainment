@@ -27,7 +27,7 @@ func test_initial_state() -> void:
 		"Confianza inicial incorrecta"
 	)
 	assert_eq(engine.budget, GameBalanceClass.INITIAL_BUDGET, "Presupuesto inicial incorrecto")
-	assert_eq(GameBalanceClass.TICK_DURATION_SECONDS, 10.0, "La duración de tick debe ser 10s")
+	assert_eq(GameBalanceClass.TICK_DURATION_SECONDS, 5.0, "La duración de tick debe ser 5s")
 	assert_eq(
 		engine.zones[GameBalanceClass.ZoneId.RESERVE].get_visual_state(),
 		&"normal",

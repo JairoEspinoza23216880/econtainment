@@ -55,7 +55,58 @@ func _ready() -> void:
 	EventBus.action_repealed.connect(func(_id: StringName) -> void: _refresh_view())
 	EventBus.game_ended.connect(_on_game_ended)
 
+	_apply_button_colors()
 	_select_branch(GameManager.last_actions_branch)
+
+
+func _apply_button_colors() -> void:
+	# Pestañas por rama: Concientización (Naranja), Legislaciones (Gris), Acciones Directas (Rojo)
+	if awareness_tab_button:
+		_style_button(awareness_tab_button, Color(0.72, 0.36, 0.12, 1.0), true)
+	if legislation_tab_button:
+		_style_button(legislation_tab_button, Color(0.32, 0.36, 0.41, 1.0), true)
+	if direct_tab_button:
+		_style_button(direct_tab_button, Color(0.62, 0.19, 0.21, 1.0), true)
+
+	# Botones de acción: Activar (Verde) y Derogar (Rojo)
+	if activate_button:
+		_style_button(activate_button, Color(0.16, 0.54, 0.31, 1.0), false)
+	if repeal_button:
+		_style_button(repeal_button, Color(0.64, 0.18, 0.18, 1.0), false)
+
+
+func _style_button(button: Button, base_color: Color, highlight_when_disabled: bool) -> void:
+	var normal := StyleBoxFlat.new()
+	normal.bg_color = base_color
+	normal.set_corner_radius_all(6)
+	normal.set_border_width_all(1)
+	normal.border_color = base_color.lightened(0.25)
+
+	var hover := normal.duplicate()
+	hover.bg_color = base_color.lightened(0.14)
+
+	var pressed := normal.duplicate()
+	pressed.bg_color = base_color.darkened(0.18)
+
+	var disabled := normal.duplicate()
+	if highlight_when_disabled:
+		# Las pestañas usan disabled=true para marcar la rama activa seleccionada
+		disabled.bg_color = base_color.lightened(0.12)
+		disabled.set_border_width_all(2)
+		disabled.border_color = Color(1.0, 1.0, 1.0, 0.9)
+	else:
+		disabled.bg_color = base_color.darkened(0.55)
+		disabled.bg_color.a = 0.75
+		disabled.border_color = Color(0.4, 0.4, 0.4, 0.5)
+
+	button.add_theme_stylebox_override("normal", normal)
+	button.add_theme_stylebox_override("hover", hover)
+	button.add_theme_stylebox_override("pressed", pressed)
+	button.add_theme_stylebox_override("disabled", disabled)
+	button.add_theme_color_override("font_color", Color.WHITE)
+	button.add_theme_color_override("font_hover_color", Color.WHITE)
+	button.add_theme_color_override("font_pressed_color", Color.WHITE)
+	button.add_theme_color_override("font_disabled_color", Color.WHITE if highlight_when_disabled else Color(0.75, 0.75, 0.75, 0.85))
 
 
 func _select_branch(branch: GameBalance.BranchType) -> void:
