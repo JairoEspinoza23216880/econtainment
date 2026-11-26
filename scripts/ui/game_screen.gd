@@ -5,9 +5,10 @@ const ACTIONS_SCENE_PATH: String = "res://scenes/actions/actions_screen.tscn"
 const MAIN_MENU_PATH: String = "res://scenes/main_menu/main_menu.tscn"
 
 @export var menu_button: Button
-@export var productive_panel: PanelContainer
-@export var urban_panel: PanelContainer
-@export var reserve_panel: PanelContainer
+@export var reroll_visuals_button: Button
+@export var productive_visuals: Node2D
+@export var urban_visuals: Node2D
+@export var reserve_visuals: Node2D
 @export var spillover_arrow_label: Label
 @export var hud_bar: PanelContainer
 @export var pause_menu: ColorRect
@@ -28,6 +29,8 @@ func _ready() -> void:
 
 	if menu_button:
 		menu_button.pressed.connect(_on_menu_button_pressed)
+	if reroll_visuals_button:
+		reroll_visuals_button.pressed.connect(_on_reroll_visuals_pressed)
 	if hud_bar:
 		hud_bar.set_actions_button_mode(false)
 		hud_bar.set_time_controls_locked(false)
@@ -71,19 +74,16 @@ func _sync_all_zones() -> void:
 
 
 func _on_zone_updated(zone_id: int, pollution: float) -> void:
-	var is_spilling := zone_id != GameBalance.ZoneId.RESERVE and pollution > GameBalance.SPILLOVER_POLLUTION_THRESHOLD
-	var zone: ZoneState = GameManager.simulation.zones.get(zone_id, null)
-	var delta := zone.last_delta if zone != null else 0.0
 	match zone_id:
 		GameBalance.ZoneId.PRODUCTIVE:
-			if productive_panel:
-				productive_panel.update_zone_display(pollution, is_spilling, delta)
+			if productive_visuals:
+				productive_visuals.update_pollution(pollution)
 		GameBalance.ZoneId.URBAN:
-			if urban_panel:
-				urban_panel.update_zone_display(pollution, is_spilling, delta)
+			if urban_visuals:
+				urban_visuals.update_pollution(pollution)
 		GameBalance.ZoneId.RESERVE:
-			if reserve_panel:
-				reserve_panel.update_zone_display(pollution, false, delta)
+			if reserve_visuals:
+				reserve_visuals.update_pollution(pollution)
 
 	_update_spillover_indicator()
 
@@ -109,14 +109,14 @@ func _on_actions_button_pressed() -> void:
 func _on_bubble_spawned(zone_id: int) -> void:
 	match zone_id:
 		GameBalance.ZoneId.PRODUCTIVE:
-			if productive_panel:
-				productive_panel.spawn_bubble()
+			if productive_visuals:
+				productive_visuals.spawn_bubble()
 		GameBalance.ZoneId.URBAN:
-			if urban_panel:
-				urban_panel.spawn_bubble()
+			if urban_visuals:
+				urban_visuals.spawn_bubble()
 		GameBalance.ZoneId.RESERVE:
-			if reserve_panel:
-				reserve_panel.spawn_bubble()
+			if reserve_visuals:
+				reserve_visuals.spawn_bubble()
 
 	if GameManager.should_show_hint(&"first_bubble"):
 		_show_tutorial_banner("¡Toca las burbujas antes de que desaparezcan! Productiva = +$4, Urbana = +2% Confianza, Reserva = -2.5% Polución.")
@@ -160,6 +160,15 @@ func _on_menu_button_pressed() -> void:
 	GameManager.set_paused(true)
 	if pause_menu:
 		pause_menu.visible = true
+
+
+func _on_reroll_visuals_pressed() -> void:
+	if productive_visuals:
+		productive_visuals.regenerate_props()
+	if urban_visuals:
+		urban_visuals.regenerate_props()
+	if reserve_visuals:
+		reserve_visuals.regenerate_props()
 
 
 func _on_pause_resumed() -> void:

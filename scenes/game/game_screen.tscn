@@ -7,7 +7,9 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/end_game_modal.tscn" id="5_end_modal"]
 [ext_resource type="PackedScene" path="res://scenes/ui/welcome_modal.tscn" id="6_welcome_modal"]
 [ext_resource type="PackedScene" path="res://scenes/ui/finance_modal.tscn" id="7_finance_modal"]
-[ext_resource type="Texture2D" path="res://assets/background_draft.png" id="8_city_bg"]
+[ext_resource type="Texture2D" uid="uid://c88vyk3meny4v" path="res://assets/background_draft.png" id="8_city_bg"]
+[ext_resource type="Script" uid="uid://dql44etm452rw" path="res://scripts/ui/zone_visual_layer.gd" id="9_zone_visuals"]
+[ext_resource type="PackedScene" path="res://scenes/game/zone_bubble.tscn" id="10_bubble"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tutorial_banner"]
 bg_color = Color(0.11, 0.19, 0.25, 0.96)
@@ -21,7 +23,7 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[node name="GameScreen" type="Control" unique_id=1920314326 node_paths=PackedStringArray("menu_button", "productive_panel", "urban_panel", "reserve_panel", "spillover_arrow_label", "hud_bar", "pause_menu", "end_game_modal", "welcome_modal", "finance_modal", "tutorial_banner", "tutorial_banner_label", "tutorial_banner_close_button")]
+[node name="GameScreen" type="Control" unique_id=1920314326 node_paths=PackedStringArray("menu_button", "reroll_visuals_button", "productive_visuals", "urban_visuals", "reserve_visuals", "spillover_arrow_label", "hud_bar", "pause_menu", "end_game_modal", "welcome_modal", "finance_modal", "tutorial_banner", "tutorial_banner_label", "tutorial_banner_close_button")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -30,10 +32,11 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_game_screen")
 menu_button = NodePath("MainVBox/CityArea/TopBarMargin/TopBar/MenuButton")
-productive_panel = NodePath("MainVBox/CityArea/ZonesCenter/ZonesVBox/UpperZones/ProductiveZone")
-urban_panel = NodePath("MainVBox/CityArea/ZonesCenter/ZonesVBox/UpperZones/UrbanZone")
-reserve_panel = NodePath("MainVBox/CityArea/ZonesCenter/ZonesVBox/ReserveCenter/ReserveZone")
-spillover_arrow_label = NodePath("MainVBox/CityArea/ZonesCenter/ZonesVBox/SpilloverLabel")
+reroll_visuals_button = NodePath("MainVBox/CityArea/TopBarMargin/TopBar/RerollVisualsButton")
+productive_visuals = NodePath("MainVBox/CityArea/ZoneVisuals/ProductiveVisuals")
+urban_visuals = NodePath("MainVBox/CityArea/ZoneVisuals/UrbanVisuals")
+reserve_visuals = NodePath("MainVBox/CityArea/ZoneVisuals/ReserveVisuals")
+spillover_arrow_label = NodePath("MainVBox/CityArea/TopBarMargin/TopBar/SpilloverLabel")
 hud_bar = NodePath("MainVBox/HudBar")
 pause_menu = NodePath("PauseMenu")
 end_game_modal = NodePath("EndGameModal")
@@ -66,7 +69,7 @@ clip_contents = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CityBackground" type="TextureRect" parent="MainVBox/CityArea"]
+[node name="CityBackground" type="TextureRect" parent="MainVBox/CityArea" unique_id=1108929768]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -77,16 +80,46 @@ texture = ExtResource("8_city_bg")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="ZonePolygons" type="Node2D" parent="MainVBox/CityArea"]
+[node name="ZonePolygons" type="Node2D" parent="MainVBox/CityArea" unique_id=566895216]
+visible = false
 
-[node name="ProductiveArea" type="Polygon2D" parent="MainVBox/CityArea/ZonePolygons"]
-color = Color(0.9, 0.5, 0.2, 0.25)
+[node name="ProductiveArea" type="Polygon2D" parent="MainVBox/CityArea/ZonePolygons" unique_id=1774895177]
+position = Vector2(403, -218)
+color = Color(0.8329387, 0.54954237, 0.24649954, 0.2509804)
+polygon = PackedVector2Array(361, 377, 611, 372, 847, 520, 325, 587)
 
-[node name="UrbanArea" type="Polygon2D" parent="MainVBox/CityArea/ZonePolygons"]
-color = Color(0.2, 0.6, 0.9, 0.25)
+[node name="UrbanArea" type="Polygon2D" parent="MainVBox/CityArea/ZonePolygons" unique_id=99437820]
+color = Color(0.7507259, 0.43847454, 0.76271933, 0.2509804)
+polygon = PackedVector2Array(128, 300, 514, 165, 764, 159, 728, 369, 378, 592)
 
-[node name="ReserveArea" type="Polygon2D" parent="MainVBox/CityArea/ZonePolygons"]
-color = Color(0.2, 0.8, 0.4, 0.25)
+[node name="ReserveArea" type="Polygon2D" parent="MainVBox/CityArea/ZonePolygons" unique_id=826861278]
+color = Color(0.52133036, 0.75763845, 0.26507255, 0.2509804)
+polygon = PackedVector2Array(1250, 302, 981, 592, 378, 592, 728, 369)
+
+[node name="ZoneVisuals" type="Node2D" parent="MainVBox/CityArea" unique_id=690275567]
+
+[node name="ProductiveVisuals" type="Node2D" parent="MainVBox/CityArea/ZoneVisuals" unique_id=677277884 node_paths=PackedStringArray("area_polygon")]
+script = ExtResource("9_zone_visuals")
+area_polygon = NodePath("../../ZonePolygons/ProductiveArea")
+prop_count = 7
+prop_scale = 0.25
+bubble_scene = ExtResource("10_bubble")
+
+[node name="UrbanVisuals" type="Node2D" parent="MainVBox/CityArea/ZoneVisuals" unique_id=556753732 node_paths=PackedStringArray("area_polygon")]
+script = ExtResource("9_zone_visuals")
+zone_id = 1
+area_polygon = NodePath("../../ZonePolygons/UrbanArea")
+prop_count = 40
+prop_scale = 0.25
+bubble_scene = ExtResource("10_bubble")
+
+[node name="ReserveVisuals" type="Node2D" parent="MainVBox/CityArea/ZoneVisuals" unique_id=832935011 node_paths=PackedStringArray("area_polygon")]
+script = ExtResource("9_zone_visuals")
+zone_id = 2
+area_polygon = NodePath("../../ZonePolygons/ReserveArea")
+prop_count = 50
+prop_scale = 0.2
+bubble_scene = ExtResource("10_bubble")
 
 [node name="TopBarMargin" type="MarginContainer" parent="MainVBox/CityArea" unique_id=371344345]
 layout_mode = 1
@@ -107,12 +140,23 @@ size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 20
 text = "Área Metropolitana — Econtainment"
 
+[node name="SpilloverLabel" type="Label" parent="MainVBox/CityArea/TopBarMargin/TopBar" unique_id=303848149]
+layout_mode = 2
+text = "↓ Drenaje controlado (<= 50%) ↓"
+horizontal_alignment = 1
+
+[node name="RerollVisualsButton" type="Button" parent="MainVBox/CityArea/TopBarMargin/TopBar" unique_id=1901820274]
+custom_minimum_size = Vector2(140, 40)
+layout_mode = 2
+text = "Recalcular"
+
 [node name="MenuButton" type="Button" parent="MainVBox/CityArea/TopBarMargin/TopBar" unique_id=1366433419]
 custom_minimum_size = Vector2(110, 40)
 layout_mode = 2
 text = "Menú"
 
 [node name="ZonesCenter" type="CenterContainer" parent="MainVBox/CityArea" unique_id=70216257]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -170,7 +214,7 @@ layout_mode = 1
 [node name="FinanceModal" parent="." unique_id=228646145 instance=ExtResource("7_finance_modal")]
 layout_mode = 1
 
-[node name="TutorialBanner" type="PanelContainer" parent="."]
+[node name="TutorialBanner" type="PanelContainer" parent="." unique_id=778729048]
 visible = false
 layout_mode = 1
 anchors_preset = 5
@@ -183,24 +227,24 @@ offset_bottom = 66.0
 grow_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_tutorial_banner")
 
-[node name="MarginContainer" type="MarginContainer" parent="TutorialBanner"]
+[node name="MarginContainer" type="MarginContainer" parent="TutorialBanner" unique_id=8618097]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 8
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TutorialBanner/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="TutorialBanner/MarginContainer" unique_id=2018762680]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="BannerLabel" type="Label" parent="TutorialBanner/MarginContainer/HBoxContainer"]
+[node name="BannerLabel" type="Label" parent="TutorialBanner/MarginContainer/HBoxContainer" unique_id=937201595]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Aviso de tutorial"
 autowrap_mode = 3
 
-[node name="CloseBannerButton" type="Button" parent="TutorialBanner/MarginContainer/HBoxContainer"]
+[node name="CloseBannerButton" type="Button" parent="TutorialBanner/MarginContainer/HBoxContainer" unique_id=1219443717]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 text = "×"
