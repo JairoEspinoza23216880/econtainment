@@ -5,10 +5,15 @@ const ACTIONS_SCENE_PATH: String = "res://scenes/actions/actions_screen.tscn"
 const MAIN_MENU_PATH: String = "res://scenes/main_menu/main_menu.tscn"
 
 @export var menu_button: Button
-@export var reroll_visuals_button: Button
+@export var toggle_pollution_button: Button
+@export var zones_overlay: Control
 @export var productive_visuals: Node2D
 @export var urban_visuals: Node2D
 @export var reserve_visuals: Node2D
+@export var productive_panel: PanelContainer
+@export var urban_panel: PanelContainer
+@export var reserve_panel: PanelContainer
+@export var spillover_banner: PanelContainer
 @export var spillover_arrow_label: Label
 @export var hud_bar: PanelContainer
 @export var pause_menu: ColorRect
@@ -29,8 +34,18 @@ func _ready() -> void:
 
 	if menu_button:
 		menu_button.pressed.connect(_on_menu_button_pressed)
-	if reroll_visuals_button:
-		reroll_visuals_button.pressed.connect(_on_reroll_visuals_pressed)
+	if toggle_pollution_button:
+		toggle_pollution_button.pressed.connect(_on_toggle_pollution_pressed)
+		if zones_overlay:
+			zones_overlay.visible = GameManager.show_pollution_overlay
+		_refresh_toggle_pollution_button()
+
+	if productive_visuals and productive_panel:
+		productive_visuals.set_avoid_rect(productive_panel.get_rect())
+	if urban_visuals and urban_panel:
+		urban_visuals.set_avoid_rect(urban_panel.get_rect())
+	if reserve_visuals and reserve_panel:
+		reserve_visuals.set_avoid_rect(reserve_panel.get_rect())
 	if hud_bar:
 		hud_bar.set_actions_button_mode(false)
 		hud_bar.set_time_controls_locked(false)
@@ -53,6 +68,7 @@ func _ready() -> void:
 	EventBus.game_ended.connect(_on_game_ended)
 
 	_sync_all_zones()
+	_restore_active_bubbles()
 
 	# Mostramos el resumen inicial solo si el modo tutorial está activo
 	if welcome_modal and GameManager.tutorial_enabled and not GameManager.has_seen_welcome:
@@ -74,16 +90,26 @@ func _sync_all_zones() -> void:
 
 
 func _on_zone_updated(zone_id: int, pollution: float) -> void:
+	var is_spilling := zone_id != GameBalance.ZoneId.RESERVE and pollution > GameBalance.SPILLOVER_POLLUTION_THRESHOLD
+	var zone: ZoneState = GameManager.simulation.zones.get(zone_id, null)
+	var delta := zone.last_delta if zone != null else 0.0
+
 	match zone_id:
 		GameBalance.ZoneId.PRODUCTIVE:
 			if productive_visuals:
 				productive_visuals.update_pollution(pollution)
+			if productive_panel:
+				productive_panel.update_zone_display(pollution, is_spilling, delta)
 		GameBalance.ZoneId.URBAN:
 			if urban_visuals:
 				urban_visuals.update_pollution(pollution)
+			if urban_panel:
+				urban_panel.update_zone_display(pollution, is_spilling, delta)
 		GameBalance.ZoneId.RESERVE:
 			if reserve_visuals:
 				reserve_visuals.update_pollution(pollution)
+			if reserve_panel:
+				reserve_panel.update_zone_display(pollution, false, delta)
 
 	_update_spillover_indicator()
 
@@ -94,12 +120,36 @@ func _update_spillover_indicator() -> void:
 	var zones := GameManager.simulation.zones
 	var prod: ZoneState = zones[GameBalance.ZoneId.PRODUCTIVE]
 	var urb: ZoneState = zones[GameBalance.ZoneId.URBAN]
-	var any_spilling := (
-		prod.pollution > GameBalance.SPILLOVER_POLLUTION_THRESHOLD
-		or urb.pollution > GameBalance.SPILLOVER_POLLUTION_THRESHOLD
-	)
-	spillover_arrow_label.text = "▼ DERRAME ACTIVO HACIA LA RESERVA ▼" if any_spilling else "↓ Drenaje controlado (<= 50%) ↓"
-	spillover_arrow_label.modulate = Color(1.0, 0.35, 0.35) if any_spilling else Color(0.75, 0.85, 0.8)
+	var prod_spilling := prod.pollution > GameBalance.SPILLOVER_POLLUTION_THRESHOLD
+	var urb_spilling := urb.pollution > GameBalance.SPILLOVER_POLLUTION_THRESHOLD
+
+	var style := StyleBoxFlat.new()
+	style.set_corner_radius_all(6)
+	style.set_border_width_all(2)
+	style.content_margin_left = 14
+	style.content_margin_right = 14
+	style.content_margin_top = 6
+	style.content_margin_bottom = 6
+
+	if prod_spilling and urb_spilling:
+		spillover_arrow_label.text = "¡Las zonas Productiva y Urbana están contaminando la Reserva!"
+		style.bg_color = Color(0.55, 0.12, 0.12, 0.96)
+		style.border_color = Color(1.0, 0.35, 0.35, 1.0)
+	elif prod_spilling:
+		spillover_arrow_label.text = "¡La Zona Productiva está contaminando la Reserva!"
+		style.bg_color = Color(0.55, 0.12, 0.12, 0.96)
+		style.border_color = Color(1.0, 0.35, 0.35, 1.0)
+	elif urb_spilling:
+		spillover_arrow_label.text = "¡La Zona Urbana está contaminando la Reserva!"
+		style.bg_color = Color(0.55, 0.12, 0.12, 0.96)
+		style.border_color = Color(1.0, 0.35, 0.35, 1.0)
+	else:
+		spillover_arrow_label.text = "Contaminación Contenible"
+		style.bg_color = Color(0.11, 0.22, 0.18, 0.94)
+		style.border_color = Color(0.32, 0.65, 0.45, 1.0)
+
+	if spillover_banner:
+		spillover_banner.add_theme_stylebox_override("panel", style)
 
 
 func _on_actions_button_pressed() -> void:
@@ -162,13 +212,36 @@ func _on_menu_button_pressed() -> void:
 		pause_menu.visible = true
 
 
-func _on_reroll_visuals_pressed() -> void:
-	if productive_visuals:
-		productive_visuals.regenerate_props()
-	if urban_visuals:
-		urban_visuals.regenerate_props()
-	if reserve_visuals:
-		reserve_visuals.regenerate_props()
+func _on_toggle_pollution_pressed() -> void:
+	if zones_overlay:
+		zones_overlay.visible = not zones_overlay.visible
+		GameManager.show_pollution_overlay = zones_overlay.visible
+	_refresh_toggle_pollution_button()
+
+
+func _restore_active_bubbles() -> void:
+	for entry: Dictionary in GameManager.active_bubbles:
+		var z_id: int = entry["zone_id"]
+		var pos: Vector2 = entry["position"]
+		var lifetime: float = entry["remaining_lifetime"]
+		var uid: int = entry["uid"]
+		match z_id:
+			GameBalance.ZoneId.PRODUCTIVE:
+				if productive_visuals:
+					productive_visuals.restore_bubble(uid, pos, lifetime)
+			GameBalance.ZoneId.URBAN:
+				if urban_visuals:
+					urban_visuals.restore_bubble(uid, pos, lifetime)
+			GameBalance.ZoneId.RESERVE:
+				if reserve_visuals:
+					reserve_visuals.restore_bubble(uid, pos, lifetime)
+
+
+func _refresh_toggle_pollution_button() -> void:
+	if toggle_pollution_button == null:
+		return
+	var is_shown := zones_overlay != null and zones_overlay.visible
+	toggle_pollution_button.text = "Ocultar Contaminación" if is_shown else "Ver Contaminación"
 
 
 func _on_pause_resumed() -> void:

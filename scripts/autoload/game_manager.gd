@@ -9,10 +9,14 @@ var speed_multiplier: float = GameBalance.SPEED_MULTIPLIER_NORMAL
 var current_tick: int = 0
 var tick_elapsed: float = 0.0
 
-# Estado de onboarding, tutorial y pausa contextual en ActionsScreen
+# Estado de onboarding, tutorial, UI persistente y pausa contextual en ActionsScreen
 var tutorial_enabled: bool = false
 var has_seen_welcome: bool = false
 var shown_tutorial_hints: Dictionary = {}
+var last_actions_branch: GameBalance.BranchType = GameBalance.BranchType.AWARENESS
+var show_pollution_overlay: bool = false
+var active_bubbles: Array[Dictionary] = []
+var _next_bubble_uid: int = 1
 var _in_actions_screen: bool = false
 var _was_paused_before_actions: bool = true
 
@@ -44,6 +48,10 @@ func start_new_game(enable_tutorial: bool = false) -> void:
 	tutorial_enabled = enable_tutorial
 	has_seen_welcome = false
 	shown_tutorial_hints.clear()
+	last_actions_branch = GameBalance.BranchType.AWARENESS
+	show_pollution_overlay = false
+	active_bubbles.clear()
+	_next_bubble_uid = 1
 	_in_actions_screen = false
 	_was_paused_before_actions = true
 	last_health_delta = 0.0
@@ -69,7 +77,37 @@ func stop_game() -> void:
 	is_playing = false
 	is_paused = false
 	_in_actions_screen = false
+	active_bubbles.clear()
 	tick_elapsed = 0.0
+
+
+## Registra una burbuja activa en memoria para que persista al cambiar entre GameScreen y ActionsScreen.
+func register_bubble(zone_id: int, pos: Vector2, lifetime: float = GameBalance.BUBBLE_LIFETIME_SECONDS) -> int:
+	var uid := _next_bubble_uid
+	_next_bubble_uid += 1
+	active_bubbles.append({
+		"uid": uid,
+		"zone_id": zone_id,
+		"position": pos,
+		"remaining_lifetime": lifetime,
+	})
+	return uid
+
+
+## Actualiza el tiempo de vida restante de una burbuja registrada.
+func update_bubble_lifetime(uid: int, remaining: float) -> void:
+	for entry: Dictionary in active_bubbles:
+		if entry["uid"] == uid:
+			entry["remaining_lifetime"] = remaining
+			return
+
+
+## Elimina una burbuja registrada tras ser recolectada o expirar.
+func remove_bubble(uid: int) -> void:
+	for i: int in range(active_bubbles.size()):
+		if active_bubbles[i]["uid"] == uid:
+			active_bubbles.remove_at(i)
+			return
 
 
 ## Fuerza la pausa al entrar a ActionsScreen, guardando si ya estaba pausado antes.

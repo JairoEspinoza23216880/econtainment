@@ -23,7 +23,7 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[node name="GameScreen" type="Control" unique_id=1920314326 node_paths=PackedStringArray("menu_button", "reroll_visuals_button", "productive_visuals", "urban_visuals", "reserve_visuals", "spillover_arrow_label", "hud_bar", "pause_menu", "end_game_modal", "welcome_modal", "finance_modal", "tutorial_banner", "tutorial_banner_label", "tutorial_banner_close_button")]
+[node name="GameScreen" type="Control" unique_id=1920314326 node_paths=PackedStringArray("menu_button", "toggle_pollution_button", "zones_overlay", "productive_visuals", "urban_visuals", "reserve_visuals", "productive_panel", "urban_panel", "reserve_panel", "spillover_banner", "spillover_arrow_label", "hud_bar", "pause_menu", "end_game_modal", "welcome_modal", "finance_modal", "tutorial_banner", "tutorial_banner_label", "tutorial_banner_close_button")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,11 +32,16 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_game_screen")
 menu_button = NodePath("MainVBox/CityArea/TopBarMargin/TopBar/MenuButton")
-reroll_visuals_button = NodePath("MainVBox/CityArea/TopBarMargin/TopBar/RerollVisualsButton")
+toggle_pollution_button = NodePath("MainVBox/CityArea/TopBarMargin/TopBar/TogglePollutionButton")
+zones_overlay = NodePath("MainVBox/CityArea/ZonesCenter")
 productive_visuals = NodePath("MainVBox/CityArea/ZoneVisuals/ProductiveVisuals")
 urban_visuals = NodePath("MainVBox/CityArea/ZoneVisuals/UrbanVisuals")
 reserve_visuals = NodePath("MainVBox/CityArea/ZoneVisuals/ReserveVisuals")
-spillover_arrow_label = NodePath("MainVBox/CityArea/TopBarMargin/TopBar/SpilloverLabel")
+productive_panel = NodePath("MainVBox/CityArea/ZonesCenter/ProductiveZone")
+urban_panel = NodePath("MainVBox/CityArea/ZonesCenter/UrbanZone")
+reserve_panel = NodePath("MainVBox/CityArea/ZonesCenter/ReserveZone")
+spillover_banner = NodePath("MainVBox/CityArea/TopBarMargin/TopBar/SpilloverBanner")
+spillover_arrow_label = NodePath("MainVBox/CityArea/TopBarMargin/TopBar/SpilloverBanner/SpilloverLabel")
 hud_bar = NodePath("MainVBox/HudBar")
 pause_menu = NodePath("PauseMenu")
 end_game_modal = NodePath("EndGameModal")
@@ -133,70 +138,73 @@ theme_override_constants/margin_right = 20
 
 [node name="TopBar" type="HBoxContainer" parent="MainVBox/CityArea/TopBarMargin" unique_id=889774172]
 layout_mode = 2
+theme_override_constants/separation = 12
 
-[node name="CityTitle" type="Label" parent="MainVBox/CityArea/TopBarMargin/TopBar" unique_id=1139795173]
+[node name="SpilloverBanner" type="PanelContainer" parent="MainVBox/CityArea/TopBarMargin/TopBar"]
+layout_mode = 2
+
+[node name="SpilloverLabel" type="Label" parent="MainVBox/CityArea/TopBarMargin/TopBar/SpilloverBanner" unique_id=303848149]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Contaminación Contenible"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TopSpacer" type="Control" parent="MainVBox/CityArea/TopBarMargin/TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 20
-text = "Área Metropolitana — Econtainment"
+mouse_filter = 2
 
-[node name="SpilloverLabel" type="Label" parent="MainVBox/CityArea/TopBarMargin/TopBar" unique_id=303848149]
+[node name="TogglePollutionButton" type="Button" parent="MainVBox/CityArea/TopBarMargin/TopBar" unique_id=1901820274]
+custom_minimum_size = Vector2(180, 40)
 layout_mode = 2
-text = "↓ Drenaje controlado (<= 50%) ↓"
-horizontal_alignment = 1
-
-[node name="RerollVisualsButton" type="Button" parent="MainVBox/CityArea/TopBarMargin/TopBar" unique_id=1901820274]
-custom_minimum_size = Vector2(140, 40)
-layout_mode = 2
-text = "Recalcular"
+text = "Ver Contaminación"
 
 [node name="MenuButton" type="Button" parent="MainVBox/CityArea/TopBarMargin/TopBar" unique_id=1366433419]
 custom_minimum_size = Vector2(110, 40)
 layout_mode = 2
 text = "Menú"
 
-[node name="ZonesCenter" type="CenterContainer" parent="MainVBox/CityArea" unique_id=70216257]
+[node name="ZonesCenter" type="Control" parent="MainVBox/CityArea" unique_id=70216257]
 visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 52.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
-[node name="ZonesVBox" type="VBoxContainer" parent="MainVBox/CityArea/ZonesCenter" unique_id=731395372]
-layout_mode = 2
-theme_override_constants/separation = 16
-
-[node name="UpperZones" type="HBoxContainer" parent="MainVBox/CityArea/ZonesCenter/ZonesVBox" unique_id=436326849]
-layout_mode = 2
-theme_override_constants/separation = 48
-alignment = 1
-
-[node name="ProductiveZone" parent="MainVBox/CityArea/ZonesCenter/ZonesVBox/UpperZones" unique_id=1729154878 instance=ExtResource("2_zone_panel")]
-layout_mode = 2
-zone_title = "Zona Productiva (Fábricas)"
+[node name="ProductiveZone" parent="MainVBox/CityArea/ZonesCenter" unique_id=1729154878 instance=ExtResource("2_zone_panel")]
+layout_mode = 0
+offset_left = 824.0
+offset_top = 200.0
+offset_right = 1054.0
+offset_bottom = 288.0
+mouse_filter = 2
+zone_title = "Zona Productiva"
 bubble_scene = null
 
-[node name="UrbanZone" parent="MainVBox/CityArea/ZonesCenter/ZonesVBox/UpperZones" unique_id=1682603059 instance=ExtResource("2_zone_panel")]
-layout_mode = 2
+[node name="UrbanZone" parent="MainVBox/CityArea/ZonesCenter" unique_id=1682603059 instance=ExtResource("2_zone_panel")]
+layout_mode = 0
+offset_left = 387.0
+offset_top = 271.0
+offset_right = 617.0
+offset_bottom = 359.0
+mouse_filter = 2
 zone_id = 1
-zone_title = "Zona Urbana (Hogares)"
+zone_title = "Zona Urbana"
 bubble_scene = null
 
-[node name="SpilloverLabel" type="Label" parent="MainVBox/CityArea/ZonesCenter/ZonesVBox" unique_id=831814885]
-layout_mode = 2
-text = "↓ Drenaje controlado (<= 50%) ↓"
-horizontal_alignment = 1
-
-[node name="ReserveCenter" type="CenterContainer" parent="MainVBox/CityArea/ZonesCenter/ZonesVBox" unique_id=1255380379]
-layout_mode = 2
-
-[node name="ReserveZone" parent="MainVBox/CityArea/ZonesCenter/ZonesVBox/ReserveCenter" unique_id=206531206 instance=ExtResource("2_zone_panel")]
-layout_mode = 2
+[node name="ReserveZone" parent="MainVBox/CityArea/ZonesCenter" unique_id=206531206 instance=ExtResource("2_zone_panel")]
+layout_mode = 0
+offset_left = 719.0
+offset_top = 418.0
+offset_right = 949.0
+offset_bottom = 506.0
+mouse_filter = 2
 zone_id = 2
-zone_title = "Reserva Biológica (Río)"
+zone_title = "Reserva Biológica"
 bubble_scene = null
 
 [node name="HudBar" parent="MainVBox" unique_id=1233571446 instance=ExtResource("3_hud_bar")]

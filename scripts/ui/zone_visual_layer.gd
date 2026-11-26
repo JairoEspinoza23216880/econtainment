@@ -17,6 +17,12 @@ const POLLUTED_SPAN: float = 65.0
 
 var _props: Array[Dictionary] = []
 var _last_pollution: float = -1.0
+var _avoid_rect: Rect2 = Rect2()
+
+
+## Define un rectángulo (ej. tarjeta de contaminación) donde conviene evitar colocar burbujas.
+func set_avoid_rect(rect: Rect2) -> void:
+	_avoid_rect = rect
 
 
 func _ready() -> void:
@@ -71,21 +77,39 @@ func update_pollution(pollution: float) -> void:
 	_last_pollution = pollution
 
 
-## Instancia una burbuja interactiva en un punto aleatorio dentro del polígono de la zona.
+## Instancia una burbuja interactiva en un punto aleatorio dentro del polígono evitando la tarjeta de UI.
 func spawn_bubble() -> void:
 	if area_polygon == null or area_polygon.polygon.size() < 3:
 		return
 
+	var pos := _sample_bubble_position()
+	var uid := GameManager.register_bubble(zone_id, pos, GameBalance.BUBBLE_LIFETIME_SECONDS)
+	restore_bubble(uid, pos, GameBalance.BUBBLE_LIFETIME_SECONDS)
+
+
+## Reinstancia una burbuja persistida al regresar a GameScreen desde ActionsScreen.
+func restore_bubble(uid: int, center_pos: Vector2, remaining_lifetime: float) -> void:
 	var scene_to_spawn := bubble_scene if bubble_scene != null else DEFAULT_BUBBLE_SCENE
 	if scene_to_spawn == null:
 		return
 
 	var bubble: Button = scene_to_spawn.instantiate()
 	add_child(bubble)
-	bubble.setup(zone_id)
+	bubble.setup(zone_id, uid, remaining_lifetime)
+	bubble.position = center_pos - bubble.custom_minimum_size * 0.5
 
-	var pos := _sample_point_in_polygon(area_polygon.polygon) + area_polygon.position
-	bubble.position = pos - bubble.custom_minimum_size * 0.5
+
+func _sample_bubble_position() -> Vector2:
+	var expanded_avoid := _avoid_rect.grow(28.0) if _avoid_rect.has_area() else Rect2()
+	var fallback := _sample_point_in_polygon(area_polygon.polygon) + area_polygon.position
+	if not expanded_avoid.has_area():
+		return fallback
+
+	for _i: int in range(32):
+		var candidate := _sample_point_in_polygon(area_polygon.polygon) + area_polygon.position
+		if not expanded_avoid.has_point(candidate):
+			return candidate
+	return fallback
 
 
 func _generate_props() -> void:

@@ -55,11 +55,12 @@ func _ready() -> void:
 	EventBus.action_repealed.connect(func(_id: StringName) -> void: _refresh_view())
 	EventBus.game_ended.connect(_on_game_ended)
 
-	_select_branch(GameBalance.BranchType.AWARENESS)
+	_select_branch(GameManager.last_actions_branch)
 
 
 func _select_branch(branch: GameBalance.BranchType) -> void:
 	_current_branch = branch
+	GameManager.last_actions_branch = branch
 	var branch_actions := GameManager.simulation.catalog.get_actions_by_branch(branch)
 	_selected_action_id = branch_actions[0].id if not branch_actions.is_empty() else &""
 
