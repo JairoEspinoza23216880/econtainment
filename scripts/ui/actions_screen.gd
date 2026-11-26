@@ -108,26 +108,16 @@ func _refresh_detail_panel() -> void:
 	if detail_desc_label:
 		detail_desc_label.text = action.description
 	if detail_pros_label:
-		detail_pros_label.text = "Ventajas: %s" % action.pros_text
+		detail_pros_label.text = _build_exact_pros_text(action)
 	if detail_cons_label:
-		detail_cons_label.text = "Riesgos: %s" % action.cons_text
+		detail_cons_label.text = _build_exact_cons_text(action)
 
-	var delay_str := "%d ticks" % action.delay_ticks if action.delay_ticks > 0 else "Inmediato"
-	var rule_notes: PackedStringArray = []
-	if action.requires_positive_budget:
-		rule_notes.append("⚠ Se suspende si presupuesto = $0")
-	if action.vulnerable_to_severe_spill:
-		rule_notes.append("⚠ Vulnerable a derrame severo")
-	if action.budget_income_penalty > 0:
-		rule_notes.append("⚠ Penaliza ingreso -$%d/mes" % action.budget_income_penalty)
-
-	var cost_text := "Coste: $%d  |  Mantenimiento: $%d/mes  |  Activación: %s" % [
+	var delay_str := "%d mes(es)" % action.delay_ticks if action.delay_ticks > 0 else "Inmediato"
+	var cost_text := "Coste inicial: $%d  |  Mantenimiento: $%d/mes  |  Activación: %s" % [
 		action.cost_budget,
 		action.maintenance_per_tick,
 		delay_str,
 	]
-	if not rule_notes.is_empty():
-		cost_text += "\n" + "  •  ".join(rule_notes)
 
 	if detail_cost_label:
 		detail_cost_label.text = cost_text
@@ -159,6 +149,51 @@ func _refresh_detail_panel() -> void:
 			var can_repeal := sim.can_repeal_action(action.id)
 			repeal_button.disabled = not can_repeal
 			repeal_button.text = "Derogar Política" if can_repeal else "Deroga primero políticas dependientes"
+
+
+func _build_exact_pros_text(action: ActionData) -> String:
+	var lines: PackedStringArray = []
+	_append_zone_pros(lines, "Zona Productiva", action.productive_emission_delta, action.productive_mitigation_delta, action.productive_regen_delta)
+	_append_zone_pros(lines, "Zona Urbana", action.urban_emission_delta, action.urban_mitigation_delta, action.urban_regen_delta)
+	_append_zone_pros(lines, "Reserva Biológica", action.reserve_emission_delta, action.reserve_mitigation_delta, action.reserve_regen_delta)
+
+	if action.immediate_trust_delta > 0.0:
+		lines.append("• +%.1f%% Confianza Ciudadana inmediata" % action.immediate_trust_delta)
+	if action.grants_early_alert:
+		lines.append("• Ratio de burbujas ×%.2f según Confianza (doble burbuja >60%%)" % GameBalance.BUBBLE_WATCH_MULTIPLIER)
+
+	if lines.is_empty():
+		return "Ventajas:\n• " + action.pros_text
+	return "Ventajas (Gameplay):\n" + "\n".join(lines)
+
+
+func _append_zone_pros(lines: PackedStringArray, zone_name: String, emission: float, mitigation: float, regen: float) -> void:
+	if emission < 0.0:
+		lines.append("• %.1f%% emisión/mes en %s" % [emission, zone_name])
+	if mitigation > 0.0:
+		lines.append("• +%.1f%% mitigación/mes en %s" % [mitigation, zone_name])
+	if regen > 0.0:
+		lines.append("• +%.1f%% regeneración/mes en %s" % [regen, zone_name])
+
+
+func _build_exact_cons_text(action: ActionData) -> String:
+	var lines: PackedStringArray = []
+	if action.immediate_trust_delta < 0.0:
+		lines.append("• %.1f%% Confianza Ciudadana inmediata" % action.immediate_trust_delta)
+	if action.budget_income_penalty > 0:
+		lines.append("• -$%d/mes en recaudación comercial" % action.budget_income_penalty)
+	if action.maintenance_per_tick > 0:
+		lines.append("• -$%d/mes de mantenimiento" % action.maintenance_per_tick)
+	if action.delay_ticks > 0:
+		lines.append("• Tarda %d mes(es) en activarse" % action.delay_ticks)
+	if action.requires_positive_budget:
+		lines.append("• Se suspende si el presupuesto llega a $0")
+	if action.vulnerable_to_severe_spill:
+		lines.append("• Se destruye si ocurre un derrame severo")
+
+	if lines.is_empty():
+		return "Riesgos (Gameplay):\n• Sin penalizaciones adicionales"
+	return "Riesgos (Gameplay):\n" + "\n".join(lines)
 
 
 func _on_action_selected(action_id: StringName) -> void:
