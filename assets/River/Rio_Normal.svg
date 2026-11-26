@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="372" height="338" viewBox="88 10 372 338" version="1.1">
+  <title>Río normal · Econtainment</title>
+  <g id="rio" inkscape:label="Río normal">
+    <g id="orillas" inkscape:groupmode="layer" inkscape:label="Orillas">
+      <polygon points="429,19 424,38 450,61 450,80 410,110 420,133 410,163 375,188 319,202 272,212 252,226 252,244 270,268 270,284 255,306 226,324 191,333 153,337 116,331 97,322 119,313 125,298 141,281 158,258 164,245 162,221 171,190 204,165 259,153 305,144 324,133 327,123 313,105 314,81 337,55 370,37 409,24" fill="#caba89" inkscape:label="Silueta de las orillas" />
+      <polygon points="313,105 314,81 337,55 370,37 409,24 394,34 363,49 341,68 326,89 330,106 343,120 335,139 310,152 259,163 209,175 182,198 174,221 174,241 165,253 167,240 166,222 176,192 205,168 259,156 307,146 327,134 331,121" fill="#8eaa68" inkscape:label="Borde izquierdo" />
+      <polygon points="446,61 448,63 448,79 407,110 417,133 407,162 372,186 318,200 271,211 250,226 250,244 268,269 268,283 254,304 225,322 191,331 154,335 147,333 184,328 221,320 250,301 264,283 264,268 246,244 246,224 268,207 317,197 371,182 404,158 414,133 403,108 443,78" fill="#7e9d5c" inkscape:label="Borde derecho" />
+    </g>
+    <g id="agua" inkscape:groupmode="layer" inkscape:label="Agua">
+      <polygon points="425,23 420,42 439,65 440,77 399,106 410,133 400,157 369,180 316,193 267,202 241,222 240,246 257,270 256,285 242,301 216,316 182,324 150,328 117,325 108,322 128,319 134,303 151,287 165,262 175,248 172,224 181,196 209,174 262,162 309,153 334,138 338,121 324,103 326,85 346,61 376,43 413,30" fill="#548ba5" inkscape:label="Superficie del río" />
+      <polygon points="425,23 414,37 390,49 367,64 355,89 353,103 370,121 367,140 342,158 307,170 257,179 223,190 200,207 194,225 195,246 185,263 173,289 153,312 133,323 108,322 128,319 134,303 151,287 165,262 175,248 172,224 181,196 209,174 262,162 309,153 334,138 338,121 324,103 326,85 346,61 376,43 413,30" fill="#6ea1b4" inkscape:label="Zona somera" />
+      <polygon points="420,42 439,65 440,77 399,106 410,133 400,157 369,180 316,193 267,202 241,222 240,246 257,270 256,285 242,301 216,316 182,324 150,328 157,324 182,317 212,306 233,287 232,265 215,242 216,218 250,190 301,182 346,170 380,151 391,129 381,106 386,97 414,76 422,65 416,50" fill="#467c97" inkscape:label="Corriente profunda" />
+    </g>
+    <g id="corrientes" inkscape:groupmode="layer" inkscape:label="Corrientes y reflejos">
+      <polygon points="385,52 403,42 408,42 400,48 386,54" fill="#98beca" inkscape:label="Reflejo" />
+      <polygon points="423,68 426,70 423,76 416,81 419,75" fill="#98beca" inkscape:label="Reflejo" />
+      <polygon points="362,81 379,76 385,77 377,81 360,84" fill="#98beca" inkscape:label="Reflejo" />
+      <polygon points="340,106 350,111 357,120 350,116" fill="#98beca" inkscape:label="Reflejo" />
+      <polygon points="377,125 385,133 381,142 374,146 378,139" fill="#98beca" inkscape:label="Reflejo" />
+      <polygon points="322,160 342,152 348,152 340,158 317,165 302,167" fill="#98beca" inkscape:label="Reflejo" />
+      <polygon points="248,175 269,170 274,171 263,175 244,178" fill="#98beca" inkscape:label="Reflejo" />
+      <polygon points="193,199 207,188 219,185 214,190 201,194 193,204" fill="#98beca" inkscape:label="Reflejo" />
+      <polygon points="257,192 281,187 302,184 288,190 254,198 242,203" fill="#98beca" inkscape:label="Reflejo" />
+      <polygon points="185,222 187,216 190,215 189,229 188,233" fill="#98beca" inkscape:label="Reflejo" />
+      <polygon points="232,222 234,215 243,210 240,216 236,223 235,233" fill="#98beca" inkscape:label="Reflejo" />
+      <polygon points="197,254 198,259 188,268 180,270 187,263" fill="#98beca" inkscape:label="Reflejo" />
+      <polygon points="193,291 204,288 198,294 181,303 174,305" fill="#98beca" inkscape:label="Reflejo" />
+      <polygon points="143,318 155,314 162,314 157,317 143,320" fill="#98beca" inkscape:label="Reflejo" />
+      <polygon points="244,268 248,274 248,281 244,288 242,289 245,279" fill="#98beca" inkscape:label="Reflejo" />
+    </g>
+    <g id="vegetacion" inkscape:groupmode="layer" inkscape:label="Detalles de orilla">
+      <g transform="translate(337 63) scale(0.27)" inkscape:label="Piedra">
+        <polygon points="-15,0 -9,-8 0,-12 12,-10 18,-2 12,3 -8,4" fill="#747965" />
+        <polygon points="-15,0 -9,-8 0,-12 8,-7 5,-1 -8,4" fill="#9d9a87" />
+        <polygon points="0,-12 12,-10 18,-2 5,-1 8,-7" fill="#bcb7a1" />
+      </g>
+      <g transform="translate(321 124) scale(0.31)" inkscape:label="Piedra">
+        <polygon points="-15,0 -9,-8 0,-12 12,-10 18,-2 12,3 -8,4" fill="#747965" />
+        <polygon points="-15,0 -9,-8 0,-12 8,-7 5,-1 -8,4" fill="#9d9a87" />
+        <polygon points="0,-12 12,-10 18,-2 5,-1 8,-7" fill="#bcb7a1" />
+      </g>
+      <g transform="translate(268 158) scale(0.26)" inkscape:label="Piedra">
+        <polygon points="-15,0 -9,-8 0,-12 12,-10 18,-2 12,3 -8,4" fill="#747965" />
+        <polygon points="-15,0 -9,-8 0,-12 8,-7 5,-1 -8,4" fill="#9d9a87" />
+        <polygon points="0,-12 12,-10 18,-2 5,-1 8,-7" fill="#bcb7a1" />
+      </g>
+      <g transform="translate(181 181) scale(0.29)" inkscape:label="Piedra">
+        <polygon points="-15,0 -9,-8 0,-12 12,-10 18,-2 12,3 -8,4" fill="#747965" />
+        <polygon points="-15,0 -9,-8 0,-12 8,-7 5,-1 -8,4" fill="#9d9a87" />
+        <polygon points="0,-12 12,-10 18,-2 5,-1 8,-7" fill="#bcb7a1" />
+      </g>
+      <g transform="translate(160 266) scale(0.29)" inkscape:label="Piedra">
+        <polygon points="-15,0 -9,-8 0,-12 12,-10 18,-2 12,3 -8,4" fill="#747965" />
+        <polygon points="-15,0 -9,-8 0,-12 8,-7 5,-1 -8,4" fill="#9d9a87" />
+        <polygon points="0,-12 12,-10 18,-2 5,-1 8,-7" fill="#bcb7a1" />
+      </g>
+      <g transform="translate(405 163) scale(0.24)" inkscape:label="Piedra">
+        <polygon points="-15,0 -9,-8 0,-12 12,-10 18,-2 12,3 -8,4" fill="#747965" />
+        <polygon points="-15,0 -9,-8 0,-12 8,-7 5,-1 -8,4" fill="#9d9a87" />
+        <polygon points="0,-12 12,-10 18,-2 5,-1 8,-7" fill="#bcb7a1" />
+      </g>
+      <g transform="translate(299 203) scale(0.31)" inkscape:label="Piedra">
+        <polygon points="-15,0 -9,-8 0,-12 12,-10 18,-2 12,3 -8,4" fill="#747965" />
+        <polygon points="-15,0 -9,-8 0,-12 8,-7 5,-1 -8,4" fill="#9d9a87" />
+        <polygon points="0,-12 12,-10 18,-2 5,-1 8,-7" fill="#bcb7a1" />
+      </g>
+      <g transform="translate(265 280) scale(0.25)" inkscape:label="Piedra">
+        <polygon points="-15,0 -9,-8 0,-12 12,-10 18,-2 12,3 -8,4" fill="#747965" />
+        <polygon points="-15,0 -9,-8 0,-12 8,-7 5,-1 -8,4" fill="#9d9a87" />
+        <polygon points="0,-12 12,-10 18,-2 5,-1 8,-7" fill="#bcb7a1" />
+      </g>
+      <g transform="translate(204 322) scale(0.26)" inkscape:label="Piedra">
+        <polygon points="-15,0 -9,-8 0,-12 12,-10 18,-2 12,3 -8,4" fill="#747965" />
+        <polygon points="-15,0 -9,-8 0,-12 8,-7 5,-1 -8,4" fill="#9d9a87" />
+        <polygon points="0,-12 12,-10 18,-2 5,-1 8,-7" fill="#bcb7a1" />
+      </g>
+      <g transform="translate(322 99) scale(0.3)" inkscape:label="Pastos de orilla">
+        <polygon points="-3,2 -14,-9 -17,-18 -8,-14 0,-4 1,-22 7,-12 5,-2 14,-13 21,-16 16,-6 8,1" fill="#3c7844" />
+        <polygon points="0,2 -5,-12 -4,-20 2,-16 6,0 13,-8 20,-10 15,-2 9,2" fill="#73a55a" />
+      </g>
+      <g transform="translate(192 190) scale(0.3)" inkscape:label="Pastos de orilla">
+        <polygon points="-3,2 -14,-9 -17,-18 -8,-14 0,-4 1,-22 7,-12 5,-2 14,-13 21,-16 16,-6 8,1" fill="#3c7844" />
+        <polygon points="0,2 -5,-12 -4,-20 2,-16 6,0 13,-8 20,-10 15,-2 9,2" fill="#73a55a" />
+      </g>
+      <g transform="translate(169 246) scale(0.28)" inkscape:label="Pastos de orilla">
+        <polygon points="-3,2 -14,-9 -17,-18 -8,-14 0,-4 1,-22 7,-12 5,-2 14,-13 21,-16 16,-6 8,1" fill="#3c7844" />
+        <polygon points="0,2 -5,-12 -4,-20 2,-16 6,0 13,-8 20,-10 15,-2 9,2" fill="#73a55a" />
+      </g>
+      <g transform="translate(410 147) scale(0.28)" inkscape:label="Pastos de orilla">
+        <polygon points="-3,2 -14,-9 -17,-18 -8,-14 0,-4 1,-22 7,-12 5,-2 14,-13 21,-16 16,-6 8,1" fill="#3c7844" />
+        <polygon points="0,2 -5,-12 -4,-20 2,-16 6,0 13,-8 20,-10 15,-2 9,2" fill="#73a55a" />
+      </g>
+      <g transform="translate(243 237) scale(0.29)" inkscape:label="Pastos de orilla">
+        <polygon points="-3,2 -14,-9 -17,-18 -8,-14 0,-4 1,-22 7,-12 5,-2 14,-13 21,-16 16,-6 8,1" fill="#3c7844" />
+        <polygon points="0,2 -5,-12 -4,-20 2,-16 6,0 13,-8 20,-10 15,-2 9,2" fill="#73a55a" />
+      </g>
+      <g transform="translate(253 298) scale(0.26)" inkscape:label="Pastos de orilla">
+        <polygon points="-3,2 -14,-9 -17,-18 -8,-14 0,-4 1,-22 7,-12 5,-2 14,-13 21,-16 16,-6 8,1" fill="#3c7844" />
+        <polygon points="0,2 -5,-12 -4,-20 2,-16 6,0 13,-8 20,-10 15,-2 9,2" fill="#73a55a" />
+      </g>
+    </g>
+  </g>
+</svg>

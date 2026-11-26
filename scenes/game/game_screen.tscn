@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/end_game_modal.tscn" id="5_end_modal"]
 [ext_resource type="PackedScene" path="res://scenes/ui/welcome_modal.tscn" id="6_welcome_modal"]
 [ext_resource type="PackedScene" path="res://scenes/ui/finance_modal.tscn" id="7_finance_modal"]
+[ext_resource type="Texture2D" path="res://assets/background_draft.png" id="8_city_bg"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tutorial_banner"]
 bg_color = Color(0.11, 0.19, 0.25, 0.96)
@@ -61,8 +62,31 @@ grow_vertical = 2
 theme_override_constants/separation = 0
 
 [node name="CityArea" type="Control" parent="MainVBox" unique_id=2021300356]
+clip_contents = true
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="CityBackground" type="TextureRect" parent="MainVBox/CityArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("8_city_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="ZonePolygons" type="Node2D" parent="MainVBox/CityArea"]
+
+[node name="ProductiveArea" type="Polygon2D" parent="MainVBox/CityArea/ZonePolygons"]
+color = Color(0.9, 0.5, 0.2, 0.25)
+
+[node name="UrbanArea" type="Polygon2D" parent="MainVBox/CityArea/ZonePolygons"]
+color = Color(0.2, 0.6, 0.9, 0.25)
+
+[node name="ReserveArea" type="Polygon2D" parent="MainVBox/CityArea/ZonePolygons"]
+color = Color(0.2, 0.8, 0.4, 0.25)
 
 [node name="TopBarMargin" type="MarginContainer" parent="MainVBox/CityArea" unique_id=371344345]
 layout_mode = 1
